@@ -86,4 +86,14 @@
         return $data;
     }
 
+    /**
+     * Fetch one result from a prepared statement
+     * @param mysqli_stmt $stmt Prepared statement
+     * @return array Single result row
+     */
+    function fetchOneResult($stmt) {
+        $result = $stmt->get_result();
+        return $result ? $result->fetch_assoc() : null;
+    }
+
 ?>
