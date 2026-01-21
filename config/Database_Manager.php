@@ -28,4 +28,42 @@
         //echo "** DataBase is Connected **<br>"; 
     }
 
-?>
+    /**
+     * Execute a prepared statement with parameters
+     * @param mysqli $connection Database connection
+     * @param string $sql SQL query with placeholders (?)
+     * @param string $types Parameter types (e.g., "sss" for 3 strings)
+     * @param array $params Array of parameter values
+     * @return array Result array with success status and statement
+     */
+    function executeQuery($connection, $sql, $types = "", $params = []) {
+        try {
+            $stmt = $connection->prepare($sql);
+            
+            if (!$stmt) {
+                throw new Exception("Prepare failed: " . $connection->error);
+            }
+            
+            // Bind parameters if provided
+            if (!empty($params) && !empty($types)) {
+                $stmt->bind_param($types, ...$params);
+            }
+            
+            if (!$stmt->execute()) {
+                throw new Exception("Execute failed: " . $stmt->error);
+            }
+            
+            return [
+                'success' => true,
+                'stmt' => $stmt,
+                'error' => null
+            ];
+        } catch (Exception $e) {
+            error_log("Query Error: " . $e->getMessage());
+            return [
+                'success' => false,
+                'stmt' => null,
+                'error' => $e->getMessage()
+            ];
+        }
+    }
