@@ -21,3 +21,12 @@ function validateEmail($email) {
 function validatePhone($phone) {
     return preg_match('/^[0-9\-\+\(\)\s]{7,}$/', $phone) === 1;
 }
+
+/**
+ * Sanitize text input (remove special characters)
+ * @param string $text Text to sanitize
+ * @return string Sanitized text
+ */
+function sanitizeText($text) {
+    return htmlspecialchars(trim($text), ENT_QUOTES, 'UTF-8');
+}
