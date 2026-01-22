@@ -1,6 +1,7 @@
 <?php
     include("../../config/Database_Manager.php");
     include("../../config/Validation.php");
+    include("../../src/views/layouts/Header.html");
 ?>
 
 <!DOCTYPE html>
@@ -94,6 +95,6 @@
 ?>
 
 <?php
-    include("Footer.html");
+    include("../../src/views/layouts/Footer.html");
     mysqli_close($conn);
 ?>
