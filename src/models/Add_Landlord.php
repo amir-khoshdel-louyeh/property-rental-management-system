@@ -1,6 +1,7 @@
 <?php
-    include("Header.html");
-    include("Database_Manager.php");
+    include("../../config/Database_Manager.php");
+    include("../../config/Validation.php");
+    include("../../src/views/layouts/Header.html");
 ?>
 
 <!DOCTYPE html>
@@ -38,35 +39,34 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') 
     {
-        $first_name = $_POST['first_name'];
-        $last_name = $_POST['last_name'];
-        $phone_number = $_POST['phone_number'];
-        $email = $_POST['email'];
+        $first_name = sanitizeText($_POST['first_name'] ?? '');
+        $last_name = sanitizeText($_POST['last_name'] ?? '');
+        $phone_number = sanitizeText($_POST['phone_number'] ?? '');
+        $email = sanitizeText($_POST['email'] ?? '');
 
-        
-        if ($first_name  != NULL && $last_name  != NULL)
-        {
-            $sql = "INSERT INTO Landlord (first_name , last_name , phone_number , email) 
-                VALUES ('$first_name', '$last_name', '$phone_number', '$email')";
-
-            try {
-                mysqli_query($conn, $sql);
+        if (empty($first_name) || empty($last_name)) {
+            echo "Please Enter ALL necessary information! <br>";
+        } else if (!empty($email) && !validateEmail($email)) {
+            echo "Invalid email format! <br>";
+        } else if (!empty($phone_number) && !validatePhone($phone_number)) {
+            echo "Invalid phone number format! <br>";
+        } else {
+            $sql = "INSERT INTO Landlord (first_name, last_name, phone_number, email) 
+                    VALUES (?, ?, ?, ?)";
+            
+            $result = executeQuery($conn, $sql, "ssss", 
+                [$first_name, $last_name, $phone_number, $email]);
+            
+            if ($result['success']) {
                 echo "Successful";
-            } 
-            catch (mysqli_sql_exception $e) 
-            {
-                echo "Try again! " . $e->getMessage(); 
+            } else {
+                echo "Try again! " . htmlspecialchars($result['error']); 
             }
         }
-        else
-        {
-            echo "Please Enter ALL nessesery informations ! <br>";
-        }
-        
     }
 ?>
 
 <?php
-    include("Footer.html");
+    include("../../src/views/layouts/Footer.html");
     mysqli_close($conn);
 ?>
