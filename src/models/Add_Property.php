@@ -61,34 +61,35 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') 
     {
-        $property_type = $_POST['property_type'];
-        $rent_sale = $_POST['rent_sale'];
-        $addres = $_POST['addres'];
-        $city = $_POST['city'];
-        $area_property = $_POST['area_property'];
-        $bedrooms = $_POST['bedrooms'];
-        $price = $_POST['price'];
-        $landlord_id = $_POST['landlord_id'];
-        $descriptions = $_POST['descriptions'];
-        $zip_code = $_POST['zip_code'];
+        $property_type = sanitizeText($_POST['property_type'] ?? '');
+        $rent_sale = sanitizeText($_POST['rent_sale'] ?? '');
+        $addres = sanitizeText($_POST['addres'] ?? '');
+        $city = sanitizeText($_POST['city'] ?? '');
+        $area_property = sanitizeText($_POST['area_property'] ?? '');
+        $bedrooms = $_POST['bedrooms'] ?? 0;
+        $price = $_POST['price'] ?? 0;
+        $landlord_id = $_POST['landlord_id'] ?? 0;
+        $descriptions = sanitizeText($_POST['descriptions'] ?? '');
+        $zip_code = sanitizeText($_POST['zip_code'] ?? '');
 
-        if ($addres  != NULL && $city != NULL && $zip_code != NULL && $landlord_id != NULL)
-        {
-            $sql = "INSERT INTO Property (property_type , addres , city , area_property  , bedrooms , descriptions , rent_sale  , price , landlord_id , zip_code) 
-                VALUES ('$property_type', '$addres', '$city', '$area_property', '$bedrooms', '$descriptions', '$rent_sale', '$price' , '$landlord_id','$zip_code')";
-
-            try {
-                mysqli_query($conn, $sql);
+        // Validate required fields
+        if (empty($addres) || empty($city) || empty($zip_code) || empty($landlord_id)) {
+            echo "Please Enter ALL necessary information! <br>";
+        } else if (!validateNumber($bedrooms) || !validateNumber($price) || !validateNumber($landlord_id)) {
+            echo "Invalid numeric input! <br>";
+        } else {
+            $sql = "INSERT INTO Property (property_type, addres, city, area_property, bedrooms, descriptions, rent_sale, price, landlord_id, zip_code) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            
+            $result = executeQuery($conn, $sql, "ssssissssi", 
+                [$property_type, $addres, $city, $area_property, intval($bedrooms), 
+                 $descriptions, $rent_sale, floatval($price), intval($landlord_id), $zip_code]);
+            
+            if ($result['success']) {
                 echo "Successful";
-            } 
-            catch (mysqli_sql_exception $e) 
-            {
-                echo "Try again! " . $e->getMessage(); 
+            } else {
+                echo "Try again! " . htmlspecialchars($result['error']); 
             }
-        }
-        else
-        {
-            echo "Please Enter ALL nessesery informations ! <br>";
         }
         
     }
