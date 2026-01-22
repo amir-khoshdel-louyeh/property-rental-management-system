@@ -30,3 +30,12 @@ function validatePhone($phone) {
 function sanitizeText($text) {
     return htmlspecialchars(trim($text), ENT_QUOTES, 'UTF-8');
 }
+
+/**
+ * Validate numeric input
+ * @param mixed $number Value to validate
+ * @return bool True if valid number
+ */
+function validateNumber($number) {
+    return is_numeric($number) && $number >= 0;
+}
