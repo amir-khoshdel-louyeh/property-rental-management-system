@@ -1,135 +1,67 @@
 <?php
-    include("Header.html");
-    include("Database_Manager.php");
+    include("../../config/Database_Manager.php");
+    include("../../config/Validation.php");
+    include("../../src/views/layouts/Header.html");
 ?>
-
 
 <!DOCTYPE html>
 <html>
 <head>
-<title>Del Property</title>
+<title>Delete Property</title>
 </head>
 <body>
 
     <h2>Delete Property Records</h2>
 
     <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post"> 
-        Enter Property ID to delete: <input type="text" name="Item_ID"><br><br>
+        Enter Property ID to delete: <input type="number" name="property_id"><br><br>
         <button type="submit">Delete</button><br>    
-        </form>
+    </form>
 
 </body>
 </html>
 
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $Item_ID = $_POST['Item_ID'];
-        if ($Item_ID != NULL) {
-            try {
-                $stmt = $conn->prepare("DELETE FROM Payment WHERE Property_ID = $Item_ID");
-                $stmt->execute();
-                echo "Rental deleted successfully from Payment table <br>";
-            } catch(PDOException $e) {
-                echo "Error deleting record: " . $e->getMessage();
+    $property_id = $_POST['property_id'] ?? 0;
+    
+    if (!validateNumber($property_id)) {
+        echo "Invalid Property ID! <br>";
+    } else {
+        $property_id = intval($property_id);
+        
+        // Delete from related tables first (referential integrity)
+        $tables_to_delete = ['Payment', 'Rental', 'PropertyServices', 'Inspection'];
+        $all_success = true;
+        
+        foreach ($tables_to_delete as $table) {
+            $sql = "DELETE FROM " . $table . " WHERE property_id = ?";
+            $result = executeQuery($conn, $sql, "i", [$property_id]);
+            
+            if (!$result['success']) {
+                echo "Error deleting from " . htmlspecialchars($table) . ": " . htmlspecialchars($result['error']) . "<br>";
+                $all_success = false;
+            } else {
+                echo htmlspecialchars($table) . " records deleted successfully<br>";
             }
-
-
-        } else {
-            echo "Fill the form.";
+        }
+        
+        // Finally delete from Property table
+        if ($all_success) {
+            $sql = "DELETE FROM Property WHERE property_id = ?";
+            $result = executeQuery($conn, $sql, "i", [$property_id]);
+            
+            if ($result['success']) {
+                echo "Property deleted successfully from Property table<br>";
+            } else {
+                echo "Error deleting property: " . htmlspecialchars($result['error']) . "<br>";
+            }
         }
     }
-
+}
 ?>
 
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $Item_ID = $_POST['Item_ID'];
-        if ($Item_ID != NULL) {
-            try {
-                $stmt = $conn->prepare("DELETE FROM Rental WHERE Property_ID = $Item_ID");
-                $stmt->execute();
-                echo "Property deleted successfully from Rental table <br>";
-            } catch(PDOException $e) {
-                echo "Error deleting record: " . $e->getMessage();
-            }
-
-
-        } else {
-            echo "Fill the form.";
-        }
-    }
-
-?>
-
-
-
-
-<?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $Item_ID = $_POST['Item_ID'];
-        if ($Item_ID != NULL) {
-            try {
-                $stmt = $conn->prepare("DELETE FROM Propertyservices WHERE Property_ID = $Item_ID");
-                $stmt->execute();
-                echo "Property deleted successfully from Propertyservices table <br>";
-            } catch(PDOException $e) {
-                echo "Error deleting record: " . $e->getMessage();
-            }
-
-
-        } else {
-            echo "Fill the form.";
-        }
-    }
-
-?>
-
-
-<?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $Item_ID = $_POST['Item_ID'];
-        if ($Item_ID != NULL) {
-            try {
-                $stmt = $conn->prepare("DELETE FROM Inspection WHERE Property_ID = $Item_ID");
-                $stmt->execute();
-                echo "Property deleted successfully from Inspection table <br>";
-            } catch(PDOException $e) {
-                echo "Error deleting record: " . $e->getMessage();
-            }
-
-
-        } else {
-            echo "Fill the form.";
-        }
-    }
-
-?>
-
-
-
-
-
-<?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $Item_ID = $_POST['Item_ID'];
-        if ($Item_ID != NULL) {
-            try {
-                $stmt = $conn->prepare("DELETE FROM Property WHERE Property_ID = $Item_ID");
-                $stmt->execute();
-                echo "Property deleted successfully from Property table <br>";
-            } catch(PDOException $e) {
-                echo "Error deleting record: " . $e->getMessage();
-            }
-
-
-        } else {
-            echo "Fill the form.";
-        }
-    }
-
-?>
-
-<?php
-    include("footer.html");
+    include("../../src/views/layouts/Footer.html");
     mysqli_close($conn);
 ?>
