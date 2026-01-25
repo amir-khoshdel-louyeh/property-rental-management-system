@@ -1,6 +1,7 @@
 <?php
-    include("Header.html");
-    include("Database_Manager.php");
+    include("../../config/Database_Manager.php");
+    include("../../config/Validation.php");
+    include("../../src/views/layouts/Header.html");
 ?>
 
 <!DOCTYPE html>
@@ -36,33 +37,28 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') 
     {
-        $property_id = $_POST['property_id'];
-        $service_id = $_POST['service_id'];
-        
+        $property_id = $_POST['property_id'] ?? 0;
+        $service_id = $_POST['service_id'] ?? 0;
 
-        if ($property_id  != NULL && $service_id  != NULL)
-        {
-            $sql = "INSERT INTO PropertyServices (property_id , service_id) 
-                VALUES ('$property_id', '$service_id')";
-
-            try {
-                mysqli_query($conn, $sql);
+        if (!validateNumber($property_id) || !validateNumber($service_id)) {
+            echo "Invalid numeric input! <br>";
+        } else {
+            $sql = "INSERT INTO PropertyServices (property_id, service_id) 
+                    VALUES (?, ?)";
+            
+            $result = executeQuery($conn, $sql, "ii", 
+                [intval($property_id), intval($service_id)]);
+            
+            if ($result['success']) {
                 echo "Successful";
-            } 
-            catch (mysqli_sql_exception $e) 
-            {
-                echo "Try again! " . $e->getMessage(); 
+            } else {
+                echo "Try again! " . htmlspecialchars($result['error']); 
             }
         }
-        else
-        {
-            echo "Please Enter ALL nessesery informations ! <br>";
-        }
-        
     }
 ?>
 
 <?php
-    include("Footer.html");
+    include("../../src/views/layouts/Footer.html");
     mysqli_close($conn);
 ?>
