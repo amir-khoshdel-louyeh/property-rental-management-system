@@ -1,6 +1,7 @@
 <?php
-    include("Header.html");
-    include("Database_Manager.php");
+    include("../../config/Database_Manager.php");
+    include("../../config/Validation.php");
+    include("../../src/views/layouts/Header.html");
 ?>
 
 <!DOCTYPE html>
@@ -33,36 +34,29 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') 
     {
-        $services_name  = $_POST['services_name'];
-        
+        $services_name = sanitizeText($_POST['services_name'] ?? '');
 
-        
-        if ($services_name != NULL)
-        {
+        if (empty($services_name)) {
+            echo "Please Enter ALL necessary information! <br>";
+        } else {
             $sql = "INSERT INTO services (services_name) 
-                VALUES ('$services_name')";
-
-            try {
-                mysqli_query($conn, $sql);
+                    VALUES (?)";
+            
+            $result = executeQuery($conn, $sql, "s", [$services_name]);
+            
+            if ($result['success']) {
                 echo "Successful";
-            } 
-            catch (mysqli_sql_exception $e) 
-            {
-                echo "Try again! " . $e->getMessage(); 
+            } else {
+                echo "Try again! " . htmlspecialchars($result['error']); 
             }
         }
-        else
-        {
-            echo "Please Enter ALL nessesery informations ! <br>";
-        }
-        
     }
 
 ?>
 
 
 <?php
-    include("Footer.html");
+    include("../../src/views/layouts/Footer.html");
     mysqli_close($conn);
 ?>
 
