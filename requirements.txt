@@ -1,0 +1,16 @@
+# System Requirements - Property & Rental Management System
+# Ubuntu/Debian packages (one per line)
+# Install with: cat requirements.txt | grep -v '^#' | xargs sudo apt install -y
+
+# PHP CLI and extensions
+php8.3-cli
+php8.3-mysql
+php8.3-json
+php8.3-mbstring
+php8.3-common
+
+# Database
+mysql-server
+
+# Version control
+git
