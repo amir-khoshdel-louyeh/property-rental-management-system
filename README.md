@@ -102,11 +102,13 @@ sudo apt install php8.3-cli php8.3-mysql mysql-server
   ```
 
 ### 4. Run Locally
-Start the PHP development server:
+Start the PHP development server from the project root:
 ```bash
 cd /path/to/project
-php -S localhost:8000
+php -S localhost:8000 -t public
 ```
+
+The `-t public` flag tells the server to use the `public/` directory as the document root.
 
 Then open your browser:
 ```
@@ -118,7 +120,10 @@ http://localhost:8000
 ##  Testing
 
 ### Manual Testing
-1. Ensure the PHP server is running (`php -S localhost:8000`)
+1. Ensure the PHP server is running with correct document root:
+   ```bash
+   php -S localhost:8000 -t public
+   ```
 2. Open `http://localhost:8000` in your browser
 3. Test CRUD operations:
    - **Add**: Create new properties, landlords, renters, payments, inspections, and services
