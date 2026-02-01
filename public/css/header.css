@@ -1,0 +1,179 @@
+/* ============================================
+   Header and Navigation Styles
+   Property Rental Management System
+   ============================================ */
+
+header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem 1rem;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+    position: relative;
+    z-index: 100;
+}
+
+header h1 {
+    text-align: center;
+    font-size: 2.2rem;
+    color: white;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    letter-spacing: 0.5px;
+}
+
+/* Navigation Menu */
+header h2 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+header a {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    display: inline-block;
+    position: relative;
+}
+
+header a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: white;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+header a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    text-decoration: none;
+}
+
+header a:hover::after {
+    width: 80%;
+}
+
+/* Remove margin spans visual separation */
+header span {
+    display: none;
+}
+
+/* Horizontal rule after header */
+header hr {
+    margin-top: 1.5rem;
+    border: none;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Navigation pills style */
+header a {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+header a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Navigation */
+@media (max-width: 1024px) {
+    header h2 {
+        gap: 0.5rem;
+    }
+
+    header a {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        padding: 1.5rem 0.5rem;
+    }
+
+    header h1 {
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+    }
+
+    header h2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    header a {
+        padding: 0.5rem;
+        text-align: center;
+        border-radius: 4px;
+    }
+
+    header span {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    header {
+        padding: 1rem 0.3rem;
+    }
+
+    header h1 {
+        font-size: 1.3rem;
+        margin-bottom: 0.8rem;
+    }
+
+    header h2 {
+        grid-template-columns: 1fr;
+        gap: 0.3rem;
+    }
+
+    header a {
+        padding: 0.4rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Active page indicator */
+header a.active {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+header a.active::after {
+    width: 100%;
+}
+
+/* Breadcrumb navigation (optional) */
+.breadcrumb {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+.breadcrumb a {
+    color: white;
+}
+
+.breadcrumb span {
+    margin: 0 0.5rem;
+    color: rgba(255, 255, 255, 0.7);
+}
