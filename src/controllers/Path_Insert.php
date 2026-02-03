@@ -1,15 +1,19 @@
-<?php
-    include("Header.html");
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Insert</title>
+    <link rel="stylesheet" href="../public/css/style.css">
+    <link rel="stylesheet" href="../public/css/header.css">
+    <link rel="stylesheet" href="../public/css/tables.css">
+    <link rel="stylesheet" href="../public/css/forms.css">
+    <link rel="stylesheet" href="../public/css/utilities.css">
 </head>
 <body>
+<?php
+    include("Header.html");
+?>
     <h1>Insert part: <br><br></h1>
     <h2>
         For Insert a Landlord <a href="Add_Landlord.php">click here</a><br><br>
@@ -23,10 +27,7 @@
     </h2>
     <a href="index.php">Go back (to Home page)</a>
 </body>
-</html>
-
-
-
 <?php
     include("Footer.html");
 ?>
+</html>
