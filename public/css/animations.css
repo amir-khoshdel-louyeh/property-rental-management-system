@@ -1,0 +1,391 @@
+/* ============================================
+   Animations and Transitions
+   Property Rental Management System
+   ============================================ */
+
+/* Smooth transitions */
+a, button, input, select, textarea {
+    transition: all 0.3s ease;
+}
+
+/* Page load fade-in animation */
+body {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Slide in animation for main content */
+main {
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hover animations for links */
+header a {
+    position: relative;
+    overflow: hidden;
+}
+
+header a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: left 0.3s ease;
+    z-index: -1;
+}
+
+header a:hover::before {
+    left: 100%;
+}
+
+/* Button press animation */
+button:active,
+input[type="submit"]:active,
+input[type="reset"]:active,
+input[type="button"]:active {
+    animation: buttonPress 0.2s ease;
+}
+
+@keyframes buttonPress {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+}
+
+/* Input focus animation */
+input:focus,
+textarea:focus,
+select:focus {
+    animation: inputFocus 0.3s ease;
+}
+
+@keyframes inputFocus {
+    from {
+        transform: scale(0.98);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+/* Table row hover animation */
+table tbody tr:hover {
+    animation: rowHover 0.3s ease;
+}
+
+@keyframes rowHover {
+    from {
+        background: white;
+        transform: scale(0.99);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+/* Smooth scroll for anchor links */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Alert animation */
+.alert {
+    animation: slideInAlert 0.4s ease-out;
+}
+
+@keyframes slideInAlert {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Card animation */
+.card {
+    animation: scaleIn 0.4s ease-out;
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ============================================
+   Advanced Responsive Design
+   ============================================ */
+
+/* Tablet devices */
+@media (max-width: 768px) {
+    body {
+        font-size: 15px;
+    }
+
+    header {
+        padding: 1.2rem 0.5rem;
+    }
+
+    header h1 {
+        font-size: 1.6rem;
+        margin-bottom: 0.8rem;
+    }
+
+    header h2 {
+        font-size: 0.9rem;
+        gap: 0.5rem;
+    }
+
+    form {
+        padding: 1.2rem;
+    }
+
+    table {
+        font-size: 0.9rem;
+    }
+
+    table th,
+    table td {
+        padding: 0.7rem;
+    }
+}
+
+/* Small devices */
+@media (max-width: 480px) {
+    body {
+        font-size: 14px;
+    }
+
+    h1 {
+        font-size: 1.4rem;
+    }
+
+    h2 {
+        font-size: 1.1rem;
+    }
+
+    h3 {
+        font-size: 1rem;
+    }
+
+    header {
+        padding: 0.8rem 0.3rem;
+    }
+
+    header h1 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    header h2 {
+        font-size: 0.8rem;
+        gap: 0.3rem;
+    }
+
+    header a {
+        padding: 0.3rem 0.4rem;
+        border-radius: 3px;
+        font-size: 0.75rem;
+    }
+
+    main {
+        padding: 0.8rem;
+        margin: 0.5rem auto;
+    }
+
+    form {
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+
+    table {
+        font-size: 0.8rem;
+    }
+
+    table th,
+    table td {
+        padding: 0.5rem;
+    }
+
+    table thead {
+        font-size: 0.75rem;
+    }
+
+    button,
+    input[type="submit"],
+    input[type="reset"],
+    input[type="button"] {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        width: 100%;
+    }
+
+    footer {
+        padding: 1rem 0.5rem;
+    }
+
+    footer h3 {
+        font-size: 0.85rem;
+    }
+}
+
+/* Large screens */
+@media (min-width: 1200px) {
+    main {
+        max-width: 1100px;
+    }
+
+    .container-xl {
+        max-width: 1100px;
+    }
+
+    header h2 {
+        gap: 1.5rem;
+    }
+
+    header a {
+        padding: 0.6rem 1.2rem;
+    }
+}
+
+/* Extra large screens */
+@media (min-width: 1920px) {
+    body {
+        font-size: 17px;
+    }
+
+    h1 {
+        font-size: 2.8rem;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+
+    main {
+        max-width: 1400px;
+        padding: 3rem;
+    }
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+
+@media print {
+    header, footer, nav {
+        display: none;
+    }
+
+    body {
+        background: white;
+        color: black;
+    }
+
+    table {
+        page-break-inside: avoid;
+    }
+
+    main {
+        box-shadow: none;
+        padding: 0;
+    }
+
+    button, input[type="submit"], input[type="button"] {
+        display: none;
+    }
+}
+
+/* ============================================
+   Dark Mode Support (Optional)
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #1a1a1a;
+        color: #e0e0e0;
+    }
+
+    main {
+        background: #2d2d2d;
+        color: #e0e0e0;
+    }
+
+    table {
+        background: #2d2d2d;
+        color: #e0e0e0;
+    }
+
+    table tbody tr:nth-child(odd) {
+        background: #3a3a3a;
+    }
+
+    table tbody tr:nth-child(even) {
+        background: #2d2d2d;
+    }
+
+    input, textarea, select {
+        background: #3a3a3a;
+        color: #e0e0e0;
+        border-color: #555;
+    }
+
+    input:focus, textarea:focus, select:focus {
+        border-color: #667eea;
+        background: #404040;
+    }
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+
+/* Focus visible for keyboard navigation */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
