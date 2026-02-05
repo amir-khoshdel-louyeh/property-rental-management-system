@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../../public/css/tables.css">
     <link rel="stylesheet" href="../../public/css/forms.css">
     <link rel="stylesheet" href="../../public/css/utilities.css">
+    <link rel="stylesheet" href="../../public/css/animations.css">
 </head>
 <body>
 <?php
