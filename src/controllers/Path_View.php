@@ -13,7 +13,7 @@
 </head>
 <body>
 <?php
-    include("Header.html");
+    include("../views/layouts/Header.html");
 ?>
     <h1>View part: <br><br></h1>
     

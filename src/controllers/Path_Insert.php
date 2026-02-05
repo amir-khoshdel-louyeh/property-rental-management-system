@@ -13,7 +13,7 @@
 </head>
 <body>
 <?php
-    include("Header.html");
+    include("../views/layouts/Header.html");
 ?>
     <h1>Insert part: <br><br></h1>
     <h2>
@@ -29,6 +29,6 @@
     <a href="index.php">Go back (to Home page)</a>
 </body>
 <?php
-    include("Footer.html");
+    include("../views/layouts/Footer.html");
 ?>
 </html>

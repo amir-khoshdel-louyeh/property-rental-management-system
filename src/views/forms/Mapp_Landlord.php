@@ -13,7 +13,7 @@
 </head>
 <body>
 <?php
-    include("Header.html");
+    include("../layouts/Header.html");
 ?>
 <h1>Landlord Page</h1>
 
@@ -28,6 +28,6 @@
     </h2>
 </body>
 <?php
-    include("Footer.html");
+    include("../layouts/Footer.html");
 ?>
 </html>

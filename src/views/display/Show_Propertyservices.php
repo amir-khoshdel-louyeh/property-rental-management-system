@@ -13,8 +13,8 @@
 </head>
 <body>
 <?php
-    include("Header.html");
-    include("Database_Manager.php");
+    include("../layouts/Header.html");
+    include("../../config/Database_Manager.php");
 ?>
     <h2>Property services informations: <br></h2>
 
@@ -51,7 +51,7 @@
 ?>
 </body>
 <?php
-    include("Footer.html");
+    include("../layouts/Footer.html");
     mysqli_close($conn);
 ?>
 </html>

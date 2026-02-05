@@ -13,7 +13,7 @@
 </head>
 <body>
 <?php
-    include("Header.html");
+    include("../layouts/Header.html");
 ?>
     <h1>Inspection Page</h1>
     <h2>Please follow the links!</h2><br><br>
@@ -27,6 +27,6 @@
     </h2>
 </body>
 <?php
-    include("Footer.html");
+    include("../layouts/Footer.html");
 ?>
 </html>
