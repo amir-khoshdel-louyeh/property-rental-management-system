@@ -30,14 +30,32 @@
             <li>Delete landlord records when needed</li>
         </ul>
     </section>
-    <h2>
-        For Add a new Landlord <a href="Add_Landlord.php">click here</a><br><br>
-        For Delete a Landlord <a href="Del_Landlord.php">click here</a><br><br>
-        For Showing the list of all Landlord <a href="Show_Landlord.php">click here</a><br><br><br>
+    <section class="actions-section">
+        <h2>Actions</h2>
+        <div class="action-buttons">
+            <div class="action-card add-action">
+                <h3>Add New Landlord</h3>
+                <p>Create a new landlord record with contact information</p>
+                <a href="Add_Landlord.php" class="btn btn-primary">Add Landlord</a>
+            </div>
 
-        <a href="index.php">Go back (to Home page)</a>
-    
-    </h2>
+            <div class="action-card view-action">
+                <h3>View All Landlords</h3>
+                <p>Browse the complete list of all registered landlords</p>
+                <a href="Show_Landlord.php" class="btn btn-info">View Landlords</a>
+            </div>
+
+            <div class="action-card delete-action">
+                <h3>Delete Landlord</h3>
+                <p>Remove a landlord record from the system</p>
+                <a href="Del_Landlord.php" class="btn btn-danger">Delete Landlord</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="navigation">
+        <a href="index.php" class="btn btn-secondary">← Back to Home</a>
+    </section>
 </body>
 <?php
     include("Footer.html");
