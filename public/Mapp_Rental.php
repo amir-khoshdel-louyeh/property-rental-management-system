@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOME</title>
+    <title>Rental</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/tables.css">
@@ -15,17 +15,17 @@
 <?php
     include("Header.html");
 ?>
-    <h1>Welcome to my project</h1>
-    <h1>in the Header you can access to each part of the site ⭡⭡ <br><br>
-    or you can use the below links ⭣⭣ <br></h1>
-    
+<h1>Rental Page</h1>
+
+    <h2>Please follow the links!</h2><br><br>
     <h2>
-        <a href="Path_Insert.php">Insert new data to the tables</a><br><br>
-        <a href="Path_Delete.php">Delete data from tables</a><br><br>
-        <a href="Path_View.php">View the database tables</a><br><br>
+        For Add a new Rental <a href="Add_Rental.php">click here</a><br><br>
+        For Delete a Rental <a href="Del_Rental.php">click here</a><br><br>
+        For Showing the list of all Rental <a href="Show_Rental.php">click here</a><br><br><br>
+
+        <a href="index.php">Go back (to Home page)</a>
+    
     </h2>
-
-
 </body>
 <?php
     include("Footer.html");
