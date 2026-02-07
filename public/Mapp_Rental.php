@@ -30,14 +30,32 @@
             <li>Delete rental records when agreements end</li>
         </ul>
     </section>
-    <h2>
-        For Add a new Rental <a href="Add_Rental.php">click here</a><br><br>
-        For Delete a Rental <a href="Del_Rental.php">click here</a><br><br>
-        For Showing the list of all Rental <a href="Show_Rental.php">click here</a><br><br><br>
+    <section class="actions-section">
+        <h2>Actions</h2>
+        <div class="action-buttons">
+            <div class="action-card add-action">
+                <h3>Create New Rental</h3>
+                <p>Set up a new rental agreement with all rental details</p>
+                <a href="Add_Rental.php" class="btn btn-primary">Add Rental</a>
+            </div>
 
-        <a href="index.php">Go back (to Home page)</a>
-    
-    </h2>
+            <div class="action-card view-action">
+                <h3>View All Rentals</h3>
+                <p>Browse the complete list of all rental agreements</p>
+                <a href="Show_Rental.php" class="btn btn-info">View Rentals</a>
+            </div>
+
+            <div class="action-card delete-action">
+                <h3>Delete Rental</h3>
+                <p>Remove a rental agreement from the system</p>
+                <a href="Del_Rental.php" class="btn btn-danger">Delete Rental</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="navigation">
+        <a href="index.php" class="btn btn-secondary">← Back to Home</a>
+    </section>
 </body>
 <?php
     include("Footer.html");
