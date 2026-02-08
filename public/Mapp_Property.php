@@ -30,14 +30,32 @@
             <li>Delete property records from the system</li>
         </ul>
     </section>
-    <h2>
-        For Add a new Property <a href="Add_Property.php">click here</a><br><br>
-        For Delete a Property <a href="Del_Property.php">click here</a><br><br>
-        For Showing the list of all Property <a href="Show_Property.php">click here</a><br><br><br>
+    <section class="actions-section">
+        <h2>Actions</h2>
+        <div class="action-buttons">
+            <div class="action-card add-action">
+                <h3>Add New Property</h3>
+                <p>Register a new property with all relevant details</p>
+                <a href="Add_Property.php" class="btn btn-primary">Add Property</a>
+            </div>
 
-        <a href="index.php">Go back (to Home page)</a>
-    
-    </h2>
+            <div class="action-card view-action">
+                <h3>View All Properties</h3>
+                <p>Browse the complete list of all properties</p>
+                <a href="Show_Property.php" class="btn btn-info">View Properties</a>
+            </div>
+
+            <div class="action-card delete-action">
+                <h3>Delete Property</h3>
+                <p>Remove a property record from the system</p>
+                <a href="Del_Property.php" class="btn btn-danger">Delete Property</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="navigation">
+        <a href="index.php" class="btn btn-secondary">← Back to Home</a>
+    </section>
 </body>
 <?php
     include("Footer.html");
