@@ -15,9 +15,21 @@
 <?php
     include("Header.html");
 ?>
-<h1>Property Page</h1>
+<main class="container">
+    <section class="page-header">
+        <h1>Property Management</h1>
+        <p class="subtitle">Manage all properties and their details</p>
+    </section>
 
-    <h2>Please follow the links!</h2><br><br>
+    <section class="property-info">
+        <h2>Property Information</h2>
+        <p>The Property Management system allows you to:</p>
+        <ul>
+            <li>Add new properties with location, type, and pricing details</li>
+            <li>View all properties in your portfolio</li>
+            <li>Delete property records from the system</li>
+        </ul>
+    </section>
     <h2>
         For Add a new Property <a href="Add_Property.php">click here</a><br><br>
         For Delete a Property <a href="Del_Property.php">click here</a><br><br>
