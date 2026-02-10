@@ -30,14 +30,32 @@
             <li>Delete renter records when needed</li>
         </ul>
     </section>
-    <h2>
-        For Add a new Renter <a href="Add_Renter.php">click here</a><br><br>
-        For Delete a Renter <a href="Del_Renter.php">click here</a><br><br>
-        For Showing the list of all Renter <a href="Show_Renter.php">click here</a><br><br><br>
+    <section class="actions-section">
+        <h2>Actions</h2>
+        <div class="action-buttons">
+            <div class="action-card add-action">
+                <h3>Add New Renter</h3>
+                <p>Register a new renter with personal information</p>
+                <a href="Add_Renter.php" class="btn btn-primary">Add Renter</a>
+            </div>
 
-        <a href="index.php">Go back (to Home page)</a>
-    
-    </h2>
+            <div class="action-card view-action">
+                <h3>View All Renters</h3>
+                <p>Browse the complete list of all registered renters</p>
+                <a href="Show_Renter.php" class="btn btn-info">View Renters</a>
+            </div>
+
+            <div class="action-card delete-action">
+                <h3>Delete Renter</h3>
+                <p>Remove a renter record from the system</p>
+                <a href="Del_Renter.php" class="btn btn-danger">Delete Renter</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="navigation">
+        <a href="index.php" class="btn btn-secondary">← Back to Home</a>
+    </section>
 </body>
 <?php
     include("Footer.html");
