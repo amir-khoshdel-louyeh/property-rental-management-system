@@ -30,14 +30,32 @@
             <li>Delete payment records when needed</li>
         </ul>
     </section>
-    <h2>
-        For Add a new Payment <a href="Add_Payment.php">click here</a><br><br>
-        For Delete a Payment <a href="Del_Payment.php">click here</a><br><br>
-        For Showing the list of all Payment <a href="Show_Payment.php">click here</a><br><br><br>
+    <section class="actions-section">
+        <h2>Actions</h2>
+        <div class="action-buttons">
+            <div class="action-card add-action">
+                <h3>Record New Payment</h3>
+                <p>Add a new payment transaction to the system</p>
+                <a href="Add_Payment.php" class="btn btn-primary">Add Payment</a>
+            </div>
 
-        <a href="index.php">Go back (to Home page)</a>
-    
-    </h2>
+            <div class="action-card view-action">
+                <h3>View All Payments</h3>
+                <p>Browse the complete payment history and transactions</p>
+                <a href="Show_Payment.php" class="btn btn-info">View Payments</a>
+            </div>
+
+            <div class="action-card delete-action">
+                <h3>Delete Payment</h3>
+                <p>Remove a payment record from the system</p>
+                <a href="Del_Payment.php" class="btn btn-danger">Delete Payment</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="navigation">
+        <a href="index.php" class="btn btn-secondary">← Back to Home</a>
+    </section>
 </body>
 <?php
     include("Footer.html");
