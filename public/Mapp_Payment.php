@@ -15,9 +15,21 @@
 <?php
     include("Header.html");
 ?>
-<h1>Payment Page</h1>
+<main class="container">
+    <section class="page-header">
+        <h1>Payment Management</h1>
+        <p class="subtitle">Track and manage all rental payments</p>
+    </section>
 
-    <h2>Please follow the links!</h2><br><br>
+    <section class="payment-info">
+        <h2>Payment Information</h2>
+        <p>The Payment Management system allows you to:</p>
+        <ul>
+            <li>Record new rental payments with date and amount</li>
+            <li>View all payment history and transactions</li>
+            <li>Delete payment records when needed</li>
+        </ul>
+    </section>
     <h2>
         For Add a new Payment <a href="Add_Payment.php">click here</a><br><br>
         For Delete a Payment <a href="Del_Payment.php">click here</a><br><br>
