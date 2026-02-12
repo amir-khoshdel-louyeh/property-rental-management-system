@@ -15,9 +15,21 @@
 <?php
     include("Header.html");
 ?>
-<h1>Services Page</h1>
+<main class="container">
+    <section class="page-header">
+        <h1>Services Management</h1>
+        <p class="subtitle">Manage property-related services and utilities</p>
+    </section>
 
-    <h2>Please follow the links!</h2><br><br>
+    <section class="services-info">
+        <h2>Services Information</h2>
+        <p>The Services Management system allows you to:</p>
+        <ul>
+            <li>Add new services available for properties</li>
+            <li>View all services offered in the system</li>
+            <li>Delete service records when needed</li>
+        </ul>
+    </section>
     <h2>
         For Add a new Services <a href="Add_Services.php">click here</a><br><br>
         For Delete a Services <a href="Del_Services.php">click here</a><br><br>
