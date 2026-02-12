@@ -30,14 +30,32 @@
             <li>Delete service records when needed</li>
         </ul>
     </section>
-    <h2>
-        For Add a new Services <a href="Add_Services.php">click here</a><br><br>
-        For Delete a Services <a href="Del_Services.php">click here</a><br><br>
-        For Showing the list of all Services <a href="Show_Services.php">click here</a><br><br><br>
+    <section class="actions-section">
+        <h2>Actions</h2>
+        <div class="action-buttons">
+            <div class="action-card add-action">
+                <h3>Add New Service</h3>
+                <p>Create a new service offering for properties</p>
+                <a href="Add_Services.php" class="btn btn-primary">Add Service</a>
+            </div>
 
-        <a href="index.php">Go back (to Home page)</a>
-    
-    </h2>
+            <div class="action-card view-action">
+                <h3>View All Services</h3>
+                <p>Browse the complete list of all available services</p>
+                <a href="Show_Services.php" class="btn btn-info">View Services</a>
+            </div>
+
+            <div class="action-card delete-action">
+                <h3>Delete Service</h3>
+                <p>Remove a service record from the system</p>
+                <a href="Del_Services.php" class="btn btn-danger">Delete Service</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="navigation">
+        <a href="index.php" class="btn btn-secondary">← Back to Home</a>
+    </section>
 </body>
 <?php
     include("Footer.html");
