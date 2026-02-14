@@ -55,7 +55,7 @@
 
     <section class="navigation">
         <a href="index.php" class="btn btn-secondary">← Back to Home</a>
-    </section>
+    </section></main>
 </body>
 <?php
     include("Footer.html");
