@@ -15,9 +15,21 @@
 <?php
     include("Header.html");
 ?>
-<h1>Property Services Page</h1>
+<main class="container">
+    <section class="page-header">
+        <h1>Property Services Management</h1>
+        <p class="subtitle">Link and manage services for properties</p>
+    </section>
 
-    <h2>Please follow the links!</h2><br><br>
+    <section class="propertyservices-info">
+        <h2>Property Services Information</h2>
+        <p>The Property Services Management system allows you to:</p>
+        <ul>
+            <li>Map and assign services to specific properties</li>
+            <li>View all service assignments for properties</li>
+            <li>Delete property service links when needed</li>
+        </ul>
+    </section>
     <h2>
         For Add a new Property services <a href="Add_Propertyservices.php">click here</a><br><br>
         For Delete a Property services <a href="Del_Propertyservices.php">click here</a><br><br>
