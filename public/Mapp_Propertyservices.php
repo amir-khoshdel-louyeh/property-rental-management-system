@@ -30,14 +30,32 @@
             <li>Delete property service links when needed</li>
         </ul>
     </section>
-    <h2>
-        For Add a new Property services <a href="Add_Propertyservices.php">click here</a><br><br>
-        For Delete a Property services <a href="Del_Propertyservices.php">click here</a><br><br>
-        For Showing the list of all Property services <a href="Show_Propertyservices.php">click here</a><br><br><br>
+    <section class="actions-section">
+        <h2>Actions</h2>
+        <div class="action-buttons">
+            <div class="action-card add-action">
+                <h3>Add Property Service</h3>
+                <p>Link a service to a specific property</p>
+                <a href="Add_Propertyservices.php" class="btn btn-primary">Add Service Link</a>
+            </div>
 
-        <a href="index.php">Go back (to Home page)</a>
-    
-    </h2>
+            <div class="action-card view-action">
+                <h3>View All Property Services</h3>
+                <p>Browse all service assignments for properties</p>
+                <a href="Show_Propertyservices.php" class="btn btn-info">View Mappings</a>
+            </div>
+
+            <div class="action-card delete-action">
+                <h3>Delete Property Service</h3>
+                <p>Remove a service link from a property</p>
+                <a href="Del_Propertyservices.php" class="btn btn-danger">Delete Link</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="navigation">
+        <a href="index.php" class="btn btn-secondary">← Back to Home</a>
+    </section>
 </body>
 <?php
     include("Footer.html");
