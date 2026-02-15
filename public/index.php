@@ -15,11 +15,16 @@
 <?php
     include("Header.html");
 ?>
-    <h1>Welcome to my project</h1>
-    <h1>in the Header you can access to each part of the site ⭡⭡ <br><br>
-    or you can use the below links ⭣⭣ <br></h1>
-    
-    <h2>
+<main class="container">
+    <section class="page-header">
+        <h1>Property & Rental Management System</h1>
+        <p class="subtitle">Comprehensive solution for managing properties, rentals, landlords, renters, and more</p>
+    </section>
+
+    <section class="home-intro">
+        <h2>Welcome to the System</h2>
+        <p>This system provides a complete platform for managing all aspects of your property rental business. Navigate through the different sections using the menu above or the action cards below to get started.</p>
+    </section>
         <a href="Path_Insert.php">Insert new data to the tables</a><br><br>
         <a href="Path_Delete.php">Delete data from tables</a><br><br>
         <a href="Path_View.php">View the database tables</a><br><br>
