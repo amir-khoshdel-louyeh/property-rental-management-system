@@ -25,10 +25,29 @@
         <h2>Welcome to the System</h2>
         <p>This system provides a complete platform for managing all aspects of your property rental business. Navigate through the different sections using the menu above or the action cards below to get started.</p>
     </section>
-        <a href="Path_Insert.php">Insert new data to the tables</a><br><br>
-        <a href="Path_Delete.php">Delete data from tables</a><br><br>
-        <a href="Path_View.php">View the database tables</a><br><br>
-    </h2>
+    <section class="actions-section">
+        <h2>Quick Actions</h2>
+        <div class="action-buttons">
+            <div class="action-card add-action">
+                <h3>Add New Data</h3>
+                <p>Create new records for properties, landlords, renters, and more</p>
+                <a href="Path_Insert.php" class="btn btn-primary">Go to Insert</a>
+            </div>
+
+            <div class="action-card view-action">
+                <h3>View Database</h3>
+                <p>Browse and review all existing records in the system</p>
+                <a href="Path_View.php" class="btn btn-info">Go to View</a>
+            </div>
+
+            <div class="action-card delete-action">
+                <h3>Delete Records</h3>
+                <p>Remove outdated or unwanted records from the system</p>
+                <a href="Path_Delete.php" class="btn btn-danger">Go to Delete</a>
+            </div>
+        </div>
+    </section>
+</main>
 
 
 </body>
