@@ -15,8 +15,21 @@
 <?php
     include("Header.html");
 ?>
-    <h1>Inspection Page</h1>
-    <h2>Please follow the links!</h2><br><br>
+<main class="container">
+    <section class="page-header">
+        <h1>Inspection Management</h1>
+        <p class="subtitle">Track and manage property inspections</p>
+    </section>
+
+    <section class="inspection-info">
+        <h2>Inspection Information</h2>
+        <p>The Inspection Management system allows you to:</p>
+        <ul>
+            <li>Record new property inspections with findings and details</li>
+            <li>View all inspection reports and history</li>
+            <li>Delete inspection records when needed</li>
+        </ul>
+    </section>
     <h2>
         For Add a new Inspection <a href="Add_Inspection.php">click here</a><br><br>
         For Delete a Inspection <a href="Del_Inspection.php">click here</a><br><br>
