@@ -30,14 +30,32 @@
             <li>Delete inspection records when needed</li>
         </ul>
     </section>
-    <h2>
-        For Add a new Inspection <a href="Add_Inspection.php">click here</a><br><br>
-        For Delete a Inspection <a href="Del_Inspection.php">click here</a><br><br>
-        For Showing the list of all Inspections <a href="Show_Inspection.php">click here</a><br><br><br>
+    <section class="actions-section">
+        <h2>Actions</h2>
+        <div class="action-buttons">
+            <div class="action-card add-action">
+                <h3>Add New Inspection</h3>
+                <p>Record a new property inspection with findings</p>
+                <a href="Add_Inspection.php" class="btn btn-primary">Add Inspection</a>
+            </div>
 
-        <a href="index.php">Go back (to Home page)</a>
-    
-    </h2>
+            <div class="action-card view-action">
+                <h3>View All Inspections</h3>
+                <p>Browse all inspection reports and history</p>
+                <a href="Show_Inspection.php" class="btn btn-info">View Inspections</a>
+            </div>
+
+            <div class="action-card delete-action">
+                <h3>Delete Inspection</h3>
+                <p>Remove an inspection record from the system</p>
+                <a href="Del_Inspection.php" class="btn btn-danger">Delete Inspection</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="navigation">
+        <a href="index.php" class="btn btn-secondary">← Back to Home</a>
+    </section>
 </body>
 <?php
     include("Footer.html");
