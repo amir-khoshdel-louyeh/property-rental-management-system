@@ -36,19 +36,19 @@
             <div class="action-card add-action">
                 <h3>Add New Renter</h3>
                 <p>Register a new renter with personal information</p>
-                <a href="Add_Renter.php" class="btn btn-primary">Add Renter</a>
+                <a href="Renter.php" class="btn btn-primary">Manage Renters</a>
             </div>
 
             <div class="action-card view-action">
                 <h3>View All Renters</h3>
                 <p>Browse the complete list of all registered renters</p>
-                <a href="Show_Renter.php" class="btn btn-info">View Renters</a>
+                <a href="Renter.php" class="btn btn-info">Manage Renters</a>
             </div>
 
             <div class="action-card delete-action">
                 <h3>Delete Renter</h3>
                 <p>Remove a renter record from the system</p>
-                <a href="Del_Renter.php" class="btn btn-danger">Delete Renter</a>
+                <a href="Renter.php" class="btn btn-danger">Manage Renters</a>
             </div>
         </div>
     </section>
