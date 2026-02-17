@@ -36,19 +36,19 @@
             <div class="action-card add-action">
                 <h3>Add New Landlord</h3>
                 <p>Create a new landlord record with contact information</p>
-                <a href="Add_Landlord.php" class="btn btn-primary">Add Landlord</a>
+                <a href="Landlord.php" class="btn btn-primary">Manage Landlords</a>
             </div>
 
             <div class="action-card view-action">
                 <h3>View All Landlords</h3>
                 <p>Browse the complete list of all registered landlords</p>
-                <a href="Show_Landlord.php" class="btn btn-info">View Landlords</a>
+                <a href="Landlord.php" class="btn btn-info">Manage Landlords</a>
             </div>
 
             <div class="action-card delete-action">
                 <h3>Delete Landlord</h3>
                 <p>Remove a landlord record from the system</p>
-                <a href="Del_Landlord.php" class="btn btn-danger">Delete Landlord</a>
+                <a href="Landlord.php" class="btn btn-danger">Manage Landlords</a>
             </div>
         </div>
     </section>
