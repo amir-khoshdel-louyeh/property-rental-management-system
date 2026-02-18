@@ -36,19 +36,19 @@
             <div class="action-card add-action">
                 <h3>Record New Payment</h3>
                 <p>Add a new payment transaction to the system</p>
-                <a href="Add_Payment.php" class="btn btn-primary">Add Payment</a>
+                <a href="Payment.php" class="btn btn-primary">Manage Payments</a>
             </div>
 
             <div class="action-card view-action">
                 <h3>View All Payments</h3>
                 <p>Browse the complete payment history and transactions</p>
-                <a href="Show_Payment.php" class="btn btn-info">View Payments</a>
+                <a href="Payment.php" class="btn btn-info">Manage Payments</a>
             </div>
 
             <div class="action-card delete-action">
                 <h3>Delete Payment</h3>
                 <p>Remove a payment record from the system</p>
-                <a href="Del_Payment.php" class="btn btn-danger">Delete Payment</a>
+                <a href="Payment.php" class="btn btn-danger">Manage Payments</a>
             </div>
         </div>
     </section>
