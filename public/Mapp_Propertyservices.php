@@ -36,19 +36,19 @@
             <div class="action-card add-action">
                 <h3>Add Property Service</h3>
                 <p>Link a service to a specific property</p>
-                <a href="Add_Propertyservices.php" class="btn btn-primary">Add Service Link</a>
+                <a href="Propertyservices.php" class="btn btn-primary">Manage Services</a>
             </div>
 
             <div class="action-card view-action">
                 <h3>View All Property Services</h3>
                 <p>Browse all service assignments for properties</p>
-                <a href="Show_Propertyservices.php" class="btn btn-info">View Mappings</a>
+                <a href="Propertyservices.php" class="btn btn-info">Manage Services</a>
             </div>
 
             <div class="action-card delete-action">
                 <h3>Delete Property Service</h3>
                 <p>Remove a service link from a property</p>
-                <a href="Del_Propertyservices.php" class="btn btn-danger">Delete Link</a>
+                <a href="Propertyservices.php" class="btn btn-danger">Manage Services</a>
             </div>
         </div>
     </section>
