@@ -36,19 +36,19 @@
             <div class="action-card add-action">
                 <h3>Add New Inspection</h3>
                 <p>Record a new property inspection with findings</p>
-                <a href="Add_Inspection.php" class="btn btn-primary">Add Inspection</a>
+                <a href="Inspection.php" class="btn btn-primary">Manage Inspections</a>
             </div>
 
             <div class="action-card view-action">
                 <h3>View All Inspections</h3>
                 <p>Browse all inspection reports and history</p>
-                <a href="Show_Inspection.php" class="btn btn-info">View Inspections</a>
+                <a href="Inspection.php" class="btn btn-info">Manage Inspections</a>
             </div>
 
             <div class="action-card delete-action">
                 <h3>Delete Inspection</h3>
                 <p>Remove an inspection record from the system</p>
-                <a href="Del_Inspection.php" class="btn btn-danger">Delete Inspection</a>
+                <a href="Inspection.php" class="btn btn-danger">Manage Inspections</a>
             </div>
         </div>
     </section>
