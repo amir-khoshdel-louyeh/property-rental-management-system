@@ -36,19 +36,19 @@
             <div class="action-card add-action">
                 <h3>Add New Service</h3>
                 <p>Create a new service offering for properties</p>
-                <a href="Add_Services.php" class="btn btn-primary">Add Service</a>
+                <a href="Services.php" class="btn btn-primary">Manage Services</a>
             </div>
 
             <div class="action-card view-action">
                 <h3>View All Services</h3>
                 <p>Browse the complete list of all available services</p>
-                <a href="Show_Services.php" class="btn btn-info">View Services</a>
+                <a href="Services.php" class="btn btn-info">Manage Services</a>
             </div>
 
             <div class="action-card delete-action">
                 <h3>Delete Service</h3>
                 <p>Remove a service record from the system</p>
-                <a href="Del_Services.php" class="btn btn-danger">Delete Service</a>
+                <a href="Services.php" class="btn btn-danger">Manage Services</a>
             </div>
         </div>
     </section>
