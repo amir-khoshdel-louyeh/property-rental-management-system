@@ -262,42 +262,6 @@ Contributions are welcome! Please follow these steps:
 
 ---
 
-## 📞 Support & Contact
-
-- **Issues**: Please use the [GitHub Issues](https://github.com/<your-username>/<repo-name>/issues) page
-- **Email**: [Your Email]
-- **LinkedIn**: [Your LinkedIn Profile]
-
----
-
-## 👨‍💻 Author
-
-**Amir Khoshdel Louyeh**
-
-[![GitHub](https://img.shields.io/badge/GitHub-amir_khoshdel-black?logo=github)](https://github.com/amir-khoshdel-louyeh)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Amir_Khoshdel-blue?logo=linkedin)](https://linkedin.com/)
-
----
-
-## 📝 Changelog
-
-### Version 1.0.0 (Current)
-- Initial project setup
-- Core entity CRUD operations
-- Database schema implementation
-- Responsive UI with CSS
-
----
-
-**Last Updated**: February 6, 2026perty_management
-mysql> SHOW TABLES;
-mysql> SELECT * FROM landlord;  # Test a sample table
-```
-
-### Browser Console
-Check for JavaScript/PHP errors in the browser console (F12)
-
----
 
 ##  Purpose
 
@@ -305,16 +269,6 @@ This project was developed mainly for:
 - Practicing **relational database design**.
 - Implementing **basic PHP CRUD operations**.
 - Serving as a starting point for a **real estate management system**.
-
----
-
-##  Next Improvements (Ideas)
-
-- Add authentication (Admin / Landlord / Renter).
-- Improve UI with modern frameworks (Bootstrap/Tailwind).
-- Add search & filtering for properties.
-- Export reports (PDF/Excel).
-- REST API layer for external integrations.
 
 ---
 
