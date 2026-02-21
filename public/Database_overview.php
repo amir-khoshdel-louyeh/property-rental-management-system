@@ -1,5 +1,5 @@
 <?php
-    include("Header.html");
+    include("layouts/Header.html");
     include("Database_Manager.php");
 ?>
 
@@ -284,6 +284,6 @@
 ?>
 
 <?php
-    include("Footer.html");
+    include("layouts/Footer.html");
     mysqli_close($conn);
 ?>

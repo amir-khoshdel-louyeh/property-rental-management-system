@@ -13,7 +13,7 @@
 </head>
 <body>
 <?php
-    include("Header.html");
+    include("layouts/Header.html");
 ?>
 <main class="container">
     <section class="page-header">
@@ -58,6 +58,6 @@
     </section></main>
 </body>
 <?php
-    include("Footer.html");
+    include("layouts/Footer.html");
 ?>
 </html>

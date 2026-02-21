@@ -1,7 +1,7 @@
 <?php
-    include("../config/Database_Manager.php");
-    include("../config/Validation.php");
-    include("Header.html");
+    include("config/Database_Manager.php");
+    include("config/Validation.php");
+    include("layouts/Header.html");
 ?>
 
 <!DOCTYPE html>
@@ -351,7 +351,7 @@ function openTab(evt, tabName) {
 
 </body>
 <?php
-    include("Footer.html");
+    include("layouts/Footer.html");
     mysqli_close($conn);
 ?>
 </html>

@@ -84,7 +84,7 @@
 </head>
 <body>
 <?php
-    include("Header.html");
+    include("layouts/Header.html");
 ?>
 <main class="container">
     <section class="page-header">
@@ -271,6 +271,6 @@ function openTab(evt, tabName) {
 
 </body>
 <?php
-    include("Footer.html");
+    include("layouts/Footer.html");
 ?>
 </html>
