@@ -41,5 +41,47 @@ class User {
             return ['success' => false, 'message' => 'Registration failed'];
         }
     }
+    
+    /**
+     * Authenticate user login
+     */
+    public function login($username, $password) {
+        $sql = "SELECT user_id, username, email, password_hash, is_active FROM users WHERE username = ?";
+        $result = executeQuery($this->conn, $sql, "s", [$username]);
+        
+        if (!$result['success']) {
+            return ['success' => false, 'message' => 'Login failed'];
+        }
+        
+        $user_result = $result['stmt']->get_result();
+        
+        if ($user_result->num_rows === 0) {
+            return ['success' => false, 'message' => 'Invalid username or password'];
+        }
+        
+        $user = $user_result->fetch_assoc();
+        
+        if (!$user['is_active']) {
+            return ['success' => false, 'message' => 'Account is inactive'];
+        }
+        
+        if (password_verify($password, $user['password_hash'])) {
+            // Update last login
+            $update_sql = "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE user_id = ?";
+            executeQuery($this->conn, $update_sql, "i", [$user['user_id']]);
+            
+            return [
+                'success' => true,
+                'message' => 'Login successful',
+                'user' => [
+                    'user_id' => $user['user_id'],
+                    'username' => $user['username'],
+                    'email' => $user['email']
+                ]
+            ];
+        } else {
+            return ['success' => false, 'message' => 'Invalid username or password'];
+        }
+    }
 }
 ?>
