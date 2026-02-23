@@ -1,0 +1,59 @@
+<?php
+/**
+ * Session Management Utilities
+ */
+
+// Start session if not already started
+function startSession() {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+}
+
+// Check if user is logged in
+function isLoggedIn() {
+    startSession();
+    return isset($_SESSION['user_id']) && isset($_SESSION['username']);
+}
+
+// Get current user ID
+function getCurrentUserId() {
+    startSession();
+    return $_SESSION['user_id'] ?? null;
+}
+
+// Get current username
+function getCurrentUsername() {
+    startSession();
+    return $_SESSION['username'] ?? null;
+}
+
+// Get current user email
+function getCurrentUserEmail() {
+    startSession();
+    return $_SESSION['email'] ?? null;
+}
+
+// Set user session
+function setUserSession($user_id, $username, $email) {
+    startSession();
+    $_SESSION['user_id'] = $user_id;
+    $_SESSION['username'] = $username;
+    $_SESSION['email'] = $email;
+}
+
+// Destroy user session (logout)
+function destroyUserSession() {
+    startSession();
+    $_SESSION = [];
+    session_destroy();
+}
+
+// Require login (redirect to login page if not logged in)
+function requireLogin() {
+    if (!isLoggedIn()) {
+        header('Location: login.php?error=Please login to access this page');
+        exit();
+    }
+}
+?>
