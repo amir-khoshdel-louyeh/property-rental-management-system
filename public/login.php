@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/utilities.css">
 </head>
 <body>
-    <?php include 'Header.html'; ?>
+    <?php include 'Header.php'; ?>
     
     <div class="container">
         <div class="form-container">
