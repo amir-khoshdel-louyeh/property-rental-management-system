@@ -1,5 +1,5 @@
 <?php
-    include("layouts/Header.html");
+    include("layouts/Header.php");
     include("Database_Manager.php");
 ?>
 

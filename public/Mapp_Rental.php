@@ -13,7 +13,7 @@
 </head>
 <body>
 <?php
-    include("layouts/Header.html");
+    include("layouts/Header.php");
 ?>
 <main class="container">
     <section class="page-header">

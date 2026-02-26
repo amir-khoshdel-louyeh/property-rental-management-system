@@ -1,7 +1,7 @@
 <?php
     include("config/Database_Manager.php");
     include("config/Validation.php");
-    include("layouts/Header.html");
+    include("layouts/Header.php");
 ?>
 
 <!DOCTYPE html>
