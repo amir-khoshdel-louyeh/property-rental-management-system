@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/forms.css">
     <link rel="stylesheet" href="css/utilities.css">
+    <link rel="stylesheet" href="css/auth.css">
 </head>
 <body>
     <?php include 'Header.php'; ?>
