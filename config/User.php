@@ -83,5 +83,30 @@ class User {
             return ['success' => false, 'message' => 'Invalid username or password'];
         }
     }
+    
+    /**
+     * Get user by ID
+     */
+    public function getUserById($user_id) {
+        $sql = "SELECT user_id, username, email, created_at, last_login, is_active FROM users WHERE user_id = ?";
+        $result = executeQuery($this->conn, $sql, "i", [$user_id]);
+        
+        if (!$result['success']) {
+            return ['success' => false, 'message' => 'Failed to fetch user'];
+        }
+        
+        $user_result = $result['stmt']->get_result();
+        
+        if ($user_result->num_rows === 0) {
+            return ['success' => false, 'message' => 'User not found'];
+        }
+        
+        $user = $user_result->fetch_assoc();
+        
+        return [
+            'success' => true,
+            'user' => $user
+        ];
+    }
 }
 ?>
