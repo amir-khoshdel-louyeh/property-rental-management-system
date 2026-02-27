@@ -133,5 +133,28 @@ class User {
             'user' => $user
         ];
     }
+    
+    /**
+     * Update user email
+     */
+    public function updateEmail($user_id, $new_email) {
+        // Check if email already exists for another user
+        $sql = "SELECT user_id FROM users WHERE email = ? AND user_id != ?";
+        $result = executeQuery($this->conn, $sql, "si", [$new_email, $user_id]);
+        
+        if ($result['success'] && $result['stmt']->get_result()->num_rows > 0) {
+            return ['success' => false, 'message' => 'Email already in use'];
+        }
+        
+        // Update email
+        $sql = "UPDATE users SET email = ? WHERE user_id = ?";
+        $result = executeQuery($this->conn, $sql, "si", [$new_email, $user_id]);
+        
+        if ($result['success']) {
+            return ['success' => true, 'message' => 'Email updated successfully'];
+        } else {
+            return ['success' => false, 'message' => 'Failed to update email'];
+        }
+    }
 }
 ?>
