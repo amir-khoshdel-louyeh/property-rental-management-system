@@ -192,5 +192,19 @@ class User {
             return ['success' => false, 'message' => 'Failed to change password'];
         }
     }
+    
+    /**
+     * Deactivate user account
+     */
+    public function deactivateAccount($user_id) {
+        $sql = "UPDATE users SET is_active = FALSE WHERE user_id = ?";
+        $result = executeQuery($this->conn, $sql, "i", [$user_id]);
+        
+        if ($result['success']) {
+            return ['success' => true, 'message' => 'Account deactivated successfully'];
+        } else {
+            return ['success' => false, 'message' => 'Failed to deactivate account'];
+        }
+    }
 }
 ?>
