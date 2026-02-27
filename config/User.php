@@ -206,5 +206,19 @@ class User {
             return ['success' => false, 'message' => 'Failed to deactivate account'];
         }
     }
+    
+    /**
+     * Activate user account
+     */
+    public function activateAccount($user_id) {
+        $sql = "UPDATE users SET is_active = TRUE WHERE user_id = ?";
+        $result = executeQuery($this->conn, $sql, "i", [$user_id]);
+        
+        if ($result['success']) {
+            return ['success' => true, 'message' => 'Account activated successfully'];
+        } else {
+            return ['success' => false, 'message' => 'Failed to activate account'];
+        }
+    }
 }
 ?>
