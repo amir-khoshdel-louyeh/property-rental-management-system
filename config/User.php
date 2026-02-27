@@ -156,5 +156,41 @@ class User {
             return ['success' => false, 'message' => 'Failed to update email'];
         }
     }
+    
+    /**
+     * Change user password
+     */
+    public function changePassword($user_id, $old_password, $new_password) {
+        // Verify old password
+        $sql = "SELECT password_hash FROM users WHERE user_id = ?";
+        $result = executeQuery($this->conn, $sql, "i", [$user_id]);
+        
+        if (!$result['success']) {
+            return ['success' => false, 'message' => 'Failed to verify password'];
+        }
+        
+        $user_result = $result['stmt']->get_result();
+        
+        if ($user_result->num_rows === 0) {
+            return ['success' => false, 'message' => 'User not found'];
+        }
+        
+        $user = $user_result->fetch_assoc();
+        
+        if (!password_verify($old_password, $user['password_hash'])) {
+            return ['success' => false, 'message' => 'Current password is incorrect'];
+        }
+        
+        // Update password
+        $new_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
+        $sql = "UPDATE users SET password_hash = ? WHERE user_id = ?";
+        $result = executeQuery($this->conn, $sql, "si", [$new_password_hash, $user_id]);
+        
+        if ($result['success']) {
+            return ['success' => true, 'message' => 'Password changed successfully'];
+        } else {
+            return ['success' => false, 'message' => 'Failed to change password'];
+        }
+    }
 }
 ?>
