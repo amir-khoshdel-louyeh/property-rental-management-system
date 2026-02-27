@@ -108,5 +108,30 @@ class User {
             'user' => $user
         ];
     }
+    
+    /**
+     * Get user by username
+     */
+    public function getUserByUsername($username) {
+        $sql = "SELECT user_id, username, email, created_at, last_login, is_active FROM users WHERE username = ?";
+        $result = executeQuery($this->conn, $sql, "s", [$username]);
+        
+        if (!$result['success']) {
+            return ['success' => false, 'message' => 'Failed to fetch user'];
+        }
+        
+        $user_result = $result['stmt']->get_result();
+        
+        if ($user_result->num_rows === 0) {
+            return ['success' => false, 'message' => 'User not found'];
+        }
+        
+        $user = $user_result->fetch_assoc();
+        
+        return [
+            'success' => true,
+            'user' => $user
+        ];
+    }
 }
 ?>
