@@ -56,4 +56,10 @@ function requireLogin() {
         exit();
     }
 }
+
+// Regenerate session ID for security
+function regenerateSession() {
+    startSession();
+    session_regenerate_id(true);
+}
 ?>
