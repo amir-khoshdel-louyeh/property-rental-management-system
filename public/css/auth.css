@@ -109,3 +109,22 @@
 .btn-primary:active {
     transform: scale(0.98);
 }
+
+/* Profile Info Styling */
+.profile-info {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.profile-info p {
+    margin: 0.75rem 0;
+    color: #333;
+}
+
+.profile-info strong {
+    display: inline-block;
+    min-width: 150px;
+    color: #495057;
+}
