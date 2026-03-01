@@ -62,4 +62,21 @@ function regenerateSession() {
     startSession();
     session_regenerate_id(true);
 }
+
+// Check for session timeout (30 minutes of inactivity)
+function checkSessionTimeout($timeout = 1800) {
+    startSession();
+    
+    if (isset($_SESSION['last_activity'])) {
+        $elapsed = time() - $_SESSION['last_activity'];
+        
+        if ($elapsed > $timeout) {
+            destroyUserSession();
+            header('Location: login.php?error=Session expired due to inactivity');
+            exit();
+        }
+    }
+    
+    $_SESSION['last_activity'] = time();
+}
 ?>
