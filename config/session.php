@@ -79,4 +79,26 @@ function checkSessionTimeout($timeout = 1800) {
     
     $_SESSION['last_activity'] = time();
 }
+
+// Set flash message
+function setFlashMessage($type, $message) {
+    startSession();
+    $_SESSION['flash_message'] = [
+        'type' => $type,
+        'message' => $message
+    ];
+}
+
+// Get and clear flash message
+function getFlashMessage() {
+    startSession();
+    
+    if (isset($_SESSION['flash_message'])) {
+        $flash = $_SESSION['flash_message'];
+        unset($_SESSION['flash_message']);
+        return $flash;
+    }
+    
+    return null;
+}
 ?>
