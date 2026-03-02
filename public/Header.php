@@ -34,6 +34,8 @@ startSession();
     <span style="margin: 0 15px;"> </span>
 
     <?php if (isLoggedIn()): ?>
+        <a href="profile.php">Profile</a>
+        <span style="margin: 0 15px;"> </span>
         <span style="color: #4CAF50;">Welcome, <?php echo htmlspecialchars(getCurrentUsername()); ?>!</span>
         <span style="margin: 0 15px;"> </span>
         <a href="logout.php">Logout</a>
