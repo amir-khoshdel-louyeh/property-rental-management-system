@@ -41,6 +41,9 @@ if ($result['success']) {
         $result['user']['email']
     );
     
+    // Regenerate session ID for security
+    regenerateSession();
+    
     // Redirect to home
     header('Location: index.php?success=Welcome back, ' . htmlspecialchars($result['user']['username']));
     exit();
