@@ -17,6 +17,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
+// Verify CSRF token
+if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) {
+    header('Location: login.php?error=Invalid security token. Please try again.');
+    exit();
+}
+
 // Get form data
 $username = trim($_POST['username'] ?? '');
 $password = $_POST['password'] ?? '';

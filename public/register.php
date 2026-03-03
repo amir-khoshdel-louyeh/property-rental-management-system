@@ -24,6 +24,7 @@
             ?>
             
             <form action="register_process.php" method="POST">
+                <?php echo getCSRFInput(); ?>
                 <div class="form-group">
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" required minlength="3" maxlength="50">

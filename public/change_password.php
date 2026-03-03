@@ -28,6 +28,7 @@
             ?>
             
             <form action="change_password_process.php" method="POST">
+                <?php echo getCSRFInput(); ?>
                 <div class="form-group">
                     <label for="current_password">Current Password:</label>
                     <input type="password" id="current_password" name="current_password" required>
