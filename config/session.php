@@ -6,6 +6,12 @@
 // Start session if not already started
 function startSession() {
     if (session_status() === PHP_SESSION_NONE) {
+        // Set secure session parameters
+        ini_set('session.cookie_httponly', 1);
+        ini_set('session.use_strict_mode', 1);
+        ini_set('session.cookie_samesite', 'Strict');
+        
+        // Start the session
         session_start();
     }
 }
@@ -100,5 +106,26 @@ function getFlashMessage() {
     }
     
     return null;
+}
+
+// Generate CSRF token
+function generateCSRFToken() {
+    startSession();
+    if (!isset($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+// Verify CSRF token
+function verifyCSRFToken($token) {
+    startSession();
+    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+}
+
+// Get CSRF token input field HTML
+function getCSRFInput() {
+    $token = generateCSRFToken();
+    return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars($token) . '">';
 }
 ?>
