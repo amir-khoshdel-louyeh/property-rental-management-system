@@ -94,6 +94,9 @@
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
 }
 
 .btn-primary {
@@ -102,8 +105,17 @@
     width: 100%;
 }
 
+button.btn-primary {
+    width: 100%;
+}
+
+a.btn-primary {
+    width: auto;
+}
+
 .btn-primary:hover {
     background-color: #0056b3;
+    text-decoration: none;
 }
 
 .btn-primary:active {

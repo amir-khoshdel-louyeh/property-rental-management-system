@@ -21,9 +21,18 @@
     
     include 'Header.php';
     
+    // Get user data
     $user = new User($conn);
     $result = $user->getUserById(getCurrentUserId());
-    $user_data = $result['user'] ?? [];
+    
+    if (!$result['success']) {
+        // Handle error - user not found
+        destroyUserSession();
+        header('Location: login.php?error=Session error. Please login again.');
+        exit();
+    }
+    
+    $user_data = $result['user'];
     ?>
     
     <div class="container">
