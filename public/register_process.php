@@ -2,6 +2,7 @@
 require_once '../config/Database_Manager.php';
 require_once '../config/User.php';
 require_once '../config/session.php';
+require_once '../config/validation_helpers.php';
 
 startSession();
 
@@ -35,21 +36,26 @@ if (empty($username) || empty($email) || empty($password) || empty($confirm_pass
     exit();
 }
 
-// Validate username length
-if (strlen($username) < 3 || strlen($username) > 50) {
-    header('Location: register.php?error=Username must be between 3 and 50 characters');
+// Validate username
+$username_validation = validateUsername($username);
+if (!$username_validation['valid']) {
+    header('Location: register.php?error=' . urlencode($username_validation['message']));
     exit();
 }
+$username = $username_validation['sanitized'];
 
 // Validate email format
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    header('Location: register.php?error=Invalid email format');
+$email_validation = validateEmail($email);
+if (!$email_validation['valid']) {
+    header('Location: register.php?error=' . urlencode($email_validation['message']));
     exit();
 }
+$email = $email_validation['sanitized'];
 
-// Validate password length
-if (strlen($password) < 6) {
-    header('Location: register.php?error=Password must be at least 6 characters');
+// Validate password strength
+$password_validation = validatePasswordStrength($password);
+if (!$password_validation['valid']) {
+    header('Location: register.php?error=' . urlencode($password_validation['message']));
     exit();
 }
 
