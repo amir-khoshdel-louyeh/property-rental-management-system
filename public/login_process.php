@@ -33,6 +33,13 @@ if (empty($username) || empty($password)) {
     exit();
 }
 
+// Check rate limiting
+$rate_check = checkLoginAttempts($username);
+if (is_array($rate_check) && isset($rate_check['locked'])) {
+    header('Location: login.php?error=Too many failed attempts. Please try again in ' . $rate_check['minutes'] . ' minutes.');
+    exit();
+}
+
 // Create User instance
 $user = new User($conn);
 
@@ -40,6 +47,9 @@ $user = new User($conn);
 $result = $user->login($username, $password);
 
 if ($result['success']) {
+    // Clear login attempts on successful login
+    clearLoginAttempts($username);
+    
     // Set session
     setUserSession(
         $result['user']['user_id'],
@@ -54,6 +64,9 @@ if ($result['success']) {
     header('Location: index.php?success=Welcome back, ' . htmlspecialchars($result['user']['username']));
     exit();
 } else {
+    // Record failed login attempt
+    recordFailedLogin($username);
+    
     // Redirect back to login with error
     header('Location: login.php?error=' . urlencode($result['message']));
     exit();
