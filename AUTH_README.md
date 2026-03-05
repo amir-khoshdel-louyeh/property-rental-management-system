@@ -129,11 +129,38 @@ if ($flash) {
 - Password hashing using `PASSWORD_DEFAULT` algorithm
 - Session regeneration on login to prevent session fixation
 - Session timeout (30 minutes of inactivity)
-- CSRF protection through session validation
+- **CSRF protection** on all forms with token verification
 - Input validation and sanitization
 - Secure password verification
 - Account status checking
 - Protected route system
+- **Rate limiting** on login attempts (5 attempts per 15 minutes)
+- **Enhanced input validation** with dedicated validation helpers
+- Secure session cookie settings (HttpOnly, Strict SameSite)
+- XSS prevention through output escaping
+- SQL injection prevention through prepared statements
+
+## Testing
+
+For complete testing instructions, see [TESTING_GUIDE.md](TESTING_GUIDE.md)
+
+## Quick Start
+
+1. **Setup Database**
+   ```bash
+   # Navigate to setup script in browser
+   http://localhost/your-project/config/setup_database.php
+   ```
+
+2. **Register First User**
+   ```
+   http://localhost/your-project/public/register.php
+   ```
+
+3. **Login**
+   ```
+   http://localhost/your-project/public/login.php
+   ```
 
 ## Navigation Links
 
