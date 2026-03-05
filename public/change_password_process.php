@@ -2,6 +2,7 @@
 require_once '../config/Database_Manager.php';
 require_once '../config/User.php';
 require_once '../config/session.php';
+require_once '../config/validation_helpers.php';
 
 startSession();
 
@@ -31,9 +32,10 @@ if (empty($current_password) || empty($new_password) || empty($confirm_new_passw
     exit();
 }
 
-// Validate new password length
-if (strlen($new_password) < 6) {
-    header('Location: change_password.php?error=New password must be at least 6 characters');
+// Validate new password strength
+$password_validation = validatePasswordStrength($new_password);
+if (!$password_validation['valid']) {
+    header('Location: change_password.php?error=' . urlencode($password_validation['message']));
     exit();
 }
 
