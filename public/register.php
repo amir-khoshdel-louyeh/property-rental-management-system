@@ -48,6 +48,16 @@
                 </div>
                 
                 <div class="form-group">
+                    <label for="role">Account Type:</label>
+                    <select id="role" name="role" required>
+                        <option value="">Select your account type</option>
+                        <option value="Landlord">Landlord - Manage properties</option>
+                        <option value="Renter" selected>Renter - Find properties to rent</option>
+                        <option value="Admin">Admin - System administrator</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
                     <button type="submit" class="btn btn-primary">Register</button>
                 </div>
             </form>
