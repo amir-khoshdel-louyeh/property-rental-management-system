@@ -40,12 +40,19 @@ function getCurrentUserEmail() {
     return $_SESSION['email'] ?? null;
 }
 
+// Get current user role
+function getCurrentUserRole() {
+    startSession();
+    return $_SESSION['role'] ?? null;
+}
+
 // Set user session
-function setUserSession($user_id, $username, $email) {
+function setUserSession($user_id, $username, $email, $role = 'Renter') {
     startSession();
     $_SESSION['user_id'] = $user_id;
     $_SESSION['username'] = $username;
     $_SESSION['email'] = $email;
+    $_SESSION['role'] = $role;
 }
 
 // Destroy user session (logout)
@@ -173,5 +180,80 @@ function clearLoginAttempts($username) {
     startSession();
     $key = 'login_attempts_' . md5($username);
     unset($_SESSION[$key]);
+}
+
+// ===== ROLE-BASED ACCESS CONTROL FUNCTIONS =====
+
+// Check if user has required role
+function hasRole($required_role) {
+    if (!isLoggedIn()) {
+        return false;
+    }
+    startSession();
+    $current_role = $_SESSION['role'] ?? null;
+    
+    // Handle array of roles (user must have one of them)
+    if (is_array($required_role)) {
+        return in_array($current_role, $required_role);
+    }
+    
+    // Single role check
+    return $current_role === $required_role;
+}
+
+// Check if user is Admin
+function isAdmin() {
+    return hasRole('Admin');
+}
+
+// Check if user is Landlord
+function isLandlord() {
+    return hasRole('Landlord');
+}
+
+// Check if user is Renter
+function isRenter() {
+    return hasRole('Renter');
+}
+
+// Require specific role (redirect if not authorized)
+function requireRole($required_role) {
+    if (!isLoggedIn()) {
+        header('Location: login.php?error=Please login to access this page');
+        exit();
+    }
+    
+    if (!hasRole($required_role)) {
+        header('Location: index.php?error=You do not have permission to access this page');
+        exit();
+    }
+}
+
+// Require Admin role
+function requireAdmin() {
+    requireRole('Admin');
+}
+
+// Require Landlord role
+function requireLandlord() {
+    requireRole('Landlord');
+}
+
+// Require Renter role
+function requireRenter() {
+    requireRole('Renter');
+}
+
+// Check if user can access resource (multiple roles allowed)
+function requireAnyRole($roles) {
+    if (!isLoggedIn()) {
+        header('Location: login.php?error=Please login to access this page');
+        exit();
+    }
+    
+    if (!hasRole($roles)) {
+        header('Location: index.php?error=You do not have permission to access this page');
+        exit();
+    }
 }
 ?>
