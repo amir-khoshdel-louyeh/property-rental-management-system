@@ -50,11 +50,12 @@ if ($result['success']) {
     // Clear login attempts on successful login
     clearLoginAttempts($username);
     
-    // Set session
+    // Set session with role
     setUserSession(
         $result['user']['user_id'],
         $result['user']['username'],
-        $result['user']['email']
+        $result['user']['email'],
+        $result['user']['role']
     );
     
     // Regenerate session ID for security
