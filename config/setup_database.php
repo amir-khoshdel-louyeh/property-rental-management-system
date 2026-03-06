@@ -14,6 +14,7 @@ $sql = "CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
+    role ENUM('Admin', 'Landlord', 'Renter') DEFAULT 'Renter' NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_login TIMESTAMP NULL,
     is_active BOOLEAN DEFAULT TRUE
@@ -23,6 +24,19 @@ if (mysqli_query($conn, $sql)) {
     echo "<p style='color: green;'>✓ Users table created successfully or already exists.</p>";
 } else {
     echo "<p style='color: red;'>✗ Error creating users table: " . mysqli_error($conn) . "</p>";
+}
+
+// Add role column if it doesn't exist (migration for existing databases)
+$check_role = mysqli_query($conn, "SHOW COLUMNS FROM users LIKE 'role'");
+if (mysqli_num_rows($check_role) === 0) {
+    $alter_sql = "ALTER TABLE users ADD COLUMN role ENUM('Admin', 'Landlord', 'Renter') DEFAULT 'Renter' NOT NULL AFTER password_hash";
+    if (mysqli_query($conn, $alter_sql)) {
+        echo "<p style='color: green;'>✓ Role column added to users table (migration).</p>";
+    } else {
+        echo "<p style='color: orange;'>⚠ Could not add role column: " . mysqli_error($conn) . "</p>";
+    }
+} else {
+    echo "<p style='color: blue;'>ℹ Role column already exists in users table.</p>";
 }
 
 // Check if table exists
