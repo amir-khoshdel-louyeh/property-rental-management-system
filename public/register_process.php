@@ -29,6 +29,13 @@ $username = trim($_POST['username'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $password = $_POST['password'] ?? '';
 $confirm_password = $_POST['confirm_password'] ?? '';
+$role = trim($_POST['role'] ?? 'Renter'); // Default to Renter
+
+// Validate role
+$valid_roles = ['Admin', 'Landlord', 'Renter'];
+if (!in_array($role, $valid_roles)) {
+    $role = 'Renter'; // Default to Renter if invalid role provided
+}
 
 // Validate input
 if (empty($username) || empty($email) || empty($password) || empty($confirm_password)) {
@@ -68,8 +75,8 @@ if ($password !== $confirm_password) {
 // Create User instance
 $user = new User($conn);
 
-// Attempt registration
-$result = $user->register($username, $email, $password);
+// Attempt registration with role
+$result = $user->register($username, $email, $password, $role);
 
 if ($result['success']) {
     // Redirect to login with success message
