@@ -11,7 +11,13 @@ class User {
     /**
      * Register a new user
      */
-    public function register($username, $email, $password) {
+    public function register($username, $email, $password, $role = 'Renter') {
+        // Validate role
+        $valid_roles = ['Admin', 'Landlord', 'Renter'];
+        if (!in_array($role, $valid_roles)) {
+            return ['success' => false, 'message' => 'Invalid role'];
+        }
+        
         // Check if username already exists
         $sql = "SELECT user_id FROM users WHERE username = ?";
         $result = executeQuery($this->conn, $sql, "s", [$username]);
@@ -31,9 +37,9 @@ class User {
         // Hash password
         $password_hash = password_hash($password, PASSWORD_DEFAULT);
         
-        // Insert new user
-        $sql = "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)";
-        $result = executeQuery($this->conn, $sql, "sss", [$username, $email, $password_hash]);
+        // Insert new user with role
+        $sql = "INSERT INTO users (username, email, password_hash, role) VALUES (?, ?, ?, ?)";
+        $result = executeQuery($this->conn, $sql, "ssss", [$username, $email, $password_hash, $role]);
         
         if ($result['success']) {
             return ['success' => true, 'message' => 'Registration successful'];
@@ -46,7 +52,7 @@ class User {
      * Authenticate user login
      */
     public function login($username, $password) {
-        $sql = "SELECT user_id, username, email, password_hash, is_active FROM users WHERE username = ?";
+        $sql = "SELECT user_id, username, email, role, password_hash, is_active FROM users WHERE username = ?";
         $result = executeQuery($this->conn, $sql, "s", [$username]);
         
         if (!$result['success']) {
@@ -76,7 +82,8 @@ class User {
                 'user' => [
                     'user_id' => $user['user_id'],
                     'username' => $user['username'],
-                    'email' => $user['email']
+                    'email' => $user['email'],
+                    'role' => $user['role']
                 ]
             ];
         } else {
@@ -88,7 +95,7 @@ class User {
      * Get user by ID
      */
     public function getUserById($user_id) {
-        $sql = "SELECT user_id, username, email, created_at, last_login, is_active FROM users WHERE user_id = ?";
+        $sql = "SELECT user_id, username, email, role, created_at, last_login, is_active FROM users WHERE user_id = ?";
         $result = executeQuery($this->conn, $sql, "i", [$user_id]);
         
         if (!$result['success']) {
@@ -113,7 +120,7 @@ class User {
      * Get user by username
      */
     public function getUserByUsername($username) {
-        $sql = "SELECT user_id, username, email, created_at, last_login, is_active FROM users WHERE username = ?";
+        $sql = "SELECT user_id, username, email, role, created_at, last_login, is_active FROM users WHERE username = ?";
         $result = executeQuery($this->conn, $sql, "s", [$username]);
         
         if (!$result['success']) {
@@ -219,6 +226,51 @@ class User {
         } else {
             return ['success' => false, 'message' => 'Failed to activate account'];
         }
+    }
+    
+    /**
+     * Update user role
+     */
+    public function updateRole($user_id, $role) {
+        // Validate role
+        $valid_roles = ['Admin', 'Landlord', 'Renter'];
+        if (!in_array($role, $valid_roles)) {
+            return ['success' => false, 'message' => 'Invalid role'];
+        }
+        
+        $sql = "UPDATE users SET role = ? WHERE user_id = ?";
+        $result = executeQuery($this->conn, $sql, "si", [$role, $user_id]);
+        
+        if ($result['success']) {
+            return ['success' => true, 'message' => 'Role updated successfully'];
+        } else {
+            return ['success' => false, 'message' => 'Failed to update role'];
+        }
+    }
+    
+    /**
+     * Get all users (Admin only)
+     */
+    public function getAllUsers() {
+        $sql = "SELECT user_id, username, email, role, created_at, last_login, is_active FROM users ORDER BY created_at DESC";
+        $result = executeQuery($this->conn, $sql, "", []);
+        
+        if (!$result['success']) {
+            return ['success' => false, 'message' => 'Failed to fetch users'];
+        }
+        
+        $users = [];
+        $user_result = $result['stmt']->get_result();
+        
+        while ($row = $user_result->fetch_assoc()) {
+            $users[] = $row;
+        }
+        
+        return [
+            'success' => true,
+            'users' => $users,
+            'count' => count($users)
+        ];
     }
 }
 ?>
