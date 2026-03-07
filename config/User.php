@@ -1,5 +1,6 @@
 <?php
 require_once 'Database_Manager.php';
+require_once 'RoleConstants.php';
 
 class User {
     private $conn;
@@ -11,10 +12,14 @@ class User {
     /**
      * Register a new user
      */
-    public function register($username, $email, $password, $role = 'Renter') {
+    public function register($username, $email, $password, $role = null) {
+        // Default to Renter role
+        if ($role === null) {
+            $role = Role::RENTER;
+        }
+        
         // Validate role
-        $valid_roles = ['Admin', 'Landlord', 'Renter'];
-        if (!in_array($role, $valid_roles)) {
+        if (!Role::isValid($role)) {
             return ['success' => false, 'message' => 'Invalid role'];
         }
         
@@ -233,8 +238,7 @@ class User {
      */
     public function updateRole($user_id, $role) {
         // Validate role
-        $valid_roles = ['Admin', 'Landlord', 'Renter'];
-        if (!in_array($role, $valid_roles)) {
+        if (!Role::isValid($role)) {
             return ['success' => false, 'message' => 'Invalid role'];
         }
         
