@@ -1,6 +1,7 @@
 <?php
     include("config/Database_Manager.php");
     include("config/Validation.php");
+    include("handlers/renter_handler.php");
     include("layouts/Header.php");
 ?>
 
@@ -181,8 +182,7 @@
             <p>View all registered renters in the system:</p>
             
             <?php
-                $sql = "SELECT * FROM Renter";
-                $result = $conn->query($sql);
+                $result = getRenters($conn);
 
                 if ($result === FALSE) {
                     echo '<div class="message error">Error querying database: ' . htmlspecialchars($conn->error) . '</div>';
@@ -217,34 +217,8 @@
             <p>Please complete the form and press the Submit button:</p>
             
             <?php
-                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add') {
-                    $first_name = sanitizeText($_POST['first_name'] ?? '');
-                    $last_name = sanitizeText($_POST['last_name'] ?? '');
-                    $phone_number = sanitizeText($_POST['phone_number'] ?? '');
-                    $email = sanitizeText($_POST['email'] ?? '');
-                    $date_of_birth = sanitizeText($_POST['date_of_birth'] ?? '');
-
-                    if (empty($first_name) || empty($last_name)) {
-                        echo '<div class="message error">Please enter ALL necessary information (First Name and Last Name are required)!</div>';
-                    } else if (!empty($email) && !validateEmail($email)) {
-                        echo '<div class="message error">Invalid email format!</div>';
-                    } else if (!empty($phone_number) && !validatePhone($phone_number)) {
-                        echo '<div class="message error">Invalid phone number format!</div>';
-                    } else if (!empty($date_of_birth) && !validateDate($date_of_birth)) {
-                        echo '<div class="message error">Invalid date format (use YYYY-MM-DD)!</div>';
-                    } else {
-                        $sql = "INSERT INTO Renter (first_name, last_name, phone_number, email, date_of_birth) 
-                                VALUES (?, ?, ?, ?, ?)";
-                        
-                        $result = executeQuery($conn, $sql, "sssss", 
-                            [$first_name, $last_name, $phone_number, $email, $date_of_birth]);
-                        
-                        if ($result['success']) {
-                            echo '<div class="message success">Renter added successfully!</div>';
-                        } else {
-                            echo '<div class="message error">Try again! ' . htmlspecialchars($result['error']) . '</div>';
-                        }
-                    }
+                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add' && !empty($message)) {
+                    echo '<div class="message ' . $message_type . '">' . $message . '</div>';
                 }
             ?>
 
@@ -291,34 +265,8 @@
             <p>Enter the Renter ID to delete the record:</p>
 
             <?php
-                if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'delete') {
-                    $renter_id = $_POST['renter_id'] ?? 0;
-                    
-                    if (!validateNumber($renter_id)) {
-                        echo '<div class="message error">Invalid Renter ID!</div>';
-                    } else {
-                        $renter_id = intval($renter_id);
-                        
-                        // Delete Rental records first
-                        $sql = "DELETE FROM Rental WHERE renter_id = ?";
-                        $result = executeQuery($conn, $sql, "i", [$renter_id]);
-                        
-                        if (!$result['success']) {
-                            echo '<div class="message error">Error deleting rentals: ' . htmlspecialchars($result['error']) . '</div>';
-                        } else {
-                            echo '<div class="message success">Rental records deleted successfully</div>';
-                            
-                            // Then delete Renter
-                            $sql = "DELETE FROM Renter WHERE renter_id = ?";
-                            $result = executeQuery($conn, $sql, "i", [$renter_id]);
-                            
-                            if ($result['success']) {
-                                echo '<div class="message success">Renter deleted successfully from the system!</div>';
-                            } else {
-                                echo '<div class="message error">Error deleting renter: ' . htmlspecialchars($result['error']) . '</div>';
-                            }
-                        }
-                    }
+                if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'delete' && !empty($message)) {
+                    echo '<div class="message ' . $message_type . '">' . $message . '</div>';
                 }
             ?>
 
