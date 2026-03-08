@@ -1,6 +1,7 @@
 <?php
     include("config/Database_Manager.php");
     include("config/Validation.php");
+    include("handlers/landlord_handler.php");
     include("layouts/Header.php");
 ?>
 
@@ -181,8 +182,7 @@
             <p>View all registered landlords in the system:</p>
             
             <?php
-                $sql = "SELECT * FROM Landlord";
-                $result = $conn->query($sql);
+                $result = getLandlords($conn);
 
                 if ($result === FALSE) {
                     echo '<div class="message error">Error querying database: ' . htmlspecialchars($conn->error) . '</div>';
@@ -217,31 +217,8 @@
             <p>Please complete the form and press the Submit button:</p>
             
             <?php
-                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add') {
-                    $first_name = sanitizeText($_POST['first_name'] ?? '');
-                    $last_name = sanitizeText($_POST['last_name'] ?? '');
-                    $phone_number = sanitizeText($_POST['phone_number'] ?? '');
-                    $email = sanitizeText($_POST['email'] ?? '');
-
-                    if (empty($first_name) || empty($last_name)) {
-                        echo '<div class="message error">Please enter ALL necessary information (First Name and Last Name are required)!</div>';
-                    } else if (!empty($email) && !validateEmail($email)) {
-                        echo '<div class="message error">Invalid email format!</div>';
-                    } else if (!empty($phone_number) && !validatePhone($phone_number)) {
-                        echo '<div class="message error">Invalid phone number format!</div>';
-                    } else {
-                        $sql = "INSERT INTO Landlord (first_name, last_name, phone_number, email) 
-                                VALUES (?, ?, ?, ?)";
-                        
-                        $result = executeQuery($conn, $sql, "ssss", 
-                            [$first_name, $last_name, $phone_number, $email]);
-                        
-                        if ($result['success']) {
-                            echo '<div class="message success">Landlord added successfully!</div>';
-                        } else {
-                            echo '<div class="message error">Try again! ' . htmlspecialchars($result['error']) . '</div>';
-                        }
-                    }
+                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add' && !empty($message)) {
+                    echo '<div class="message ' . $message_type . '">' . $message . '</div>';
                 }
             ?>
 
@@ -283,45 +260,8 @@
             <p>Enter the Landlord ID to delete the record:</p>
 
             <?php
-                if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'delete') {
-                    $landlord_id = $_POST['landlord_id'] ?? 0;
-                    
-                    if (!validateNumber($landlord_id)) {
-                        echo '<div class="message error">Invalid Landlord ID!</div>';
-                    } else {
-                        $landlord_id = intval($landlord_id);
-                        
-                        // Delete related records first (referential integrity)
-                        $tables_to_delete = [
-                            ['table' => 'Inspection', 'column' => 'conducted_by'],
-                            ['table' => 'Property', 'column' => 'landlord_id']
-                        ];
-                        $all_success = true;
-                        
-                        foreach ($tables_to_delete as $delete_info) {
-                            $sql = "DELETE FROM " . $delete_info['table'] . " WHERE " . $delete_info['column'] . " = ?";
-                            $result = executeQuery($conn, $sql, "i", [$landlord_id]);
-                            
-                            if (!$result['success']) {
-                                echo '<div class="message error">Error deleting from ' . htmlspecialchars($delete_info['table']) . ': ' . htmlspecialchars($result['error']) . '</div>';
-                                $all_success = false;
-                            } else {
-                                echo '<div class="message success">' . htmlspecialchars($delete_info['table']) . ' records deleted successfully</div>';
-                            }
-                        }
-                        
-                        // Finally delete from Landlord table
-                        if ($all_success) {
-                            $sql = "DELETE FROM Landlord WHERE landlord_id = ?";
-                            $result = executeQuery($conn, $sql, "i", [$landlord_id]);
-                            
-                            if ($result['success']) {
-                                echo '<div class="message success">Landlord deleted successfully from the system!</div>';
-                            } else {
-                                echo '<div class="message error">Error deleting landlord: ' . htmlspecialchars($result['error']) . '</div>';
-                            }
-                        }
-                    }
+                if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'delete' && !empty($message)) {
+                    echo '<div class="message ' . $message_type . '">' . $message . '</div>';
                 }
             ?>
 
