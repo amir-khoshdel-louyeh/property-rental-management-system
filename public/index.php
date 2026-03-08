@@ -11,6 +11,33 @@
     <link rel="stylesheet" href="css/utilities.css">
     <link rel="stylesheet" href="css/animations.css">
     <style>
+        .role-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        .role-badge.admin {
+            background: #dc3545;
+            color: white;
+        }
+        .role-badge.landlord {
+            background: #ffc107;
+            color: #333;
+        }
+        .role-badge.renter {
+            background: #28a745;
+            color: white;
+        }
+        .user-greeting {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.25rem;
+        }
         .tabs-container {
             display: flex;
             border-bottom: 2px solid #dee2e6;
@@ -37,6 +64,10 @@
             background: #007bff;
             color: white;
             border-bottom-color: #007bff;
+        }
+        .tab-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         .tab-content {
             display: none;
@@ -80,11 +111,29 @@
         .entity-card a:hover {
             background: #0056b3;
         }
+        .entity-card.restricted {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .entity-card.restricted a {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .alert-info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.25rem;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
 <?php
     include("layouts/Header.php");
+    require_once '../config/session.php';
+    require_once '../config/RoleConstants.php';
 ?>
 <main class="container">
     <section class="page-header">
@@ -92,12 +141,32 @@
         <p class="subtitle">Comprehensive solution for managing properties, rentals, landlords, renters, and more</p>
     </section>
 
+    <?php if (isLoggedIn()): ?>
+        <div class="user-greeting">
+            <p>
+                <strong>Welcome back, <?php echo htmlspecialchars(getCurrentUsername()); ?>!</strong>
+                <span class="role-badge <?php echo strtolower(getCurrentUserRole()); ?>">
+                    <?php echo htmlspecialchars(getCurrentUserRole()); ?>
+                </span>
+            </p>
+            <?php if (isAdmin()): ?>
+                <p style="margin-top: 0.5rem;">
+                    <a href="manage_users.php">Manage Users</a>
+                </p>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+
     <section class="home-intro">
         <h2>Welcome to the System</h2>
         <p>This system provides a complete platform for managing all aspects of your property rental business. Use the tabs below to add new data, view existing records, or delete outdated information.</p>
     </section>
 
     <div class="tabs-container">
+        <button class="tab-button active" onclick="openTab(event, 'insert-tab')">Add New Data</button>
+        <button class="tab-button" onclick="openTab(event, 'view-tab')">View Database</button>
+        <button class="tab-button" onclick="openTab(event, 'delete-tab')">Delete Records</button>
+    </div>
         <button class="tab-button active" onclick="openTab(event, 'insert-tab')">Add New Data</button>
         <button class="tab-button" onclick="openTab(event, 'view-tab')">View Database</button>
         <button class="tab-button" onclick="openTab(event, 'delete-tab')">Delete Records</button>
