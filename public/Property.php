@@ -1,6 +1,7 @@
 <?php
     include("config/Database_Manager.php");
     include("config/Validation.php");
+    include("handlers/property_handler.php");
     include("layouts/Header.php");
 ?>
 
@@ -196,8 +197,7 @@
             <p>View all properties in your portfolio:</p>
             
             <?php
-                $sql = "SELECT * FROM Property";
-                $result = $conn->query($sql);
+                $result = getProperties($conn);
 
                 if ($result === FALSE) {
                     echo '<div class="message error">Error querying database: ' . htmlspecialchars($conn->error) . '</div>';
@@ -232,37 +232,8 @@
             <p>Please complete the form and press the Submit button:</p>
             
             <?php
-                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add') {
-                    $property_type = sanitizeText($_POST['property_type'] ?? '');
-                    $rent_sale = sanitizeText($_POST['rent_sale'] ?? '');
-                    $addres = sanitizeText($_POST['addres'] ?? '');
-                    $city = sanitizeText($_POST['city'] ?? '');
-                    $area_property = sanitizeText($_POST['area_property'] ?? '');
-                    $bedrooms = $_POST['bedrooms'] ?? 0;
-                    $price = $_POST['price'] ?? 0;
-                    $landlord_id = $_POST['landlord_id'] ?? 0;
-                    $descriptions = sanitizeText($_POST['descriptions'] ?? '');
-                    $zip_code = sanitizeText($_POST['zip_code'] ?? '');
-
-                    // Validate required fields
-                    if (empty($addres) || empty($city) || empty($zip_code) || empty($landlord_id)) {
-                        echo '<div class="message error">Please enter ALL necessary information (Address, City, Zip Code, and Landlord ID are required)!</div>';
-                    } else if (!validateNumber($bedrooms) || !validateNumber($price) || !validateNumber($landlord_id)) {
-                        echo '<div class="message error">Invalid numeric input!</div>';
-                    } else {
-                        $sql = "INSERT INTO Property (property_type, addres, city, area_property, bedrooms, descriptions, rent_sale, price, landlord_id, zip_code) 
-                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                        
-                        $result = executeQuery($conn, $sql, "ssssissssi", 
-                            [$property_type, $addres, $city, $area_property, intval($bedrooms), 
-                             $descriptions, $rent_sale, floatval($price), intval($landlord_id), $zip_code]);
-                        
-                        if ($result['success']) {
-                            echo '<div class="message success">Property added successfully!</div>';
-                        } else {
-                            echo '<div class="message error">Try again! ' . htmlspecialchars($result['error']) . '</div>';
-                        }
-                    }
+                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add' && !empty($message)) {
+                    echo '<div class="message ' . $message_type . '">' . $message . '</div>';
                 }
             ?>
 
@@ -349,42 +320,8 @@
             <p>Enter the Property ID to delete the record:</p>
 
             <?php
-                if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'delete') {
-                    $property_id = $_POST['property_id'] ?? 0;
-                    
-                    if (!validateNumber($property_id)) {
-                        echo '<div class="message error">Invalid Property ID!</div>';
-                    } else {
-                        $property_id = intval($property_id);
-                        
-                        // Delete from related tables first (referential integrity)
-                        $tables_to_delete = ['Payment', 'Rental', 'PropertyServices', 'Inspection'];
-                        $all_success = true;
-                        
-                        foreach ($tables_to_delete as $table) {
-                            $sql = "DELETE FROM " . $table . " WHERE property_id = ?";
-                            $result = executeQuery($conn, $sql, "i", [$property_id]);
-                            
-                            if (!$result['success']) {
-                                echo '<div class="message error">Error deleting from ' . htmlspecialchars($table) . ': ' . htmlspecialchars($result['error']) . '</div>';
-                                $all_success = false;
-                            } else {
-                                echo '<div class="message success">' . htmlspecialchars($table) . ' records deleted successfully</div>';
-                            }
-                        }
-                        
-                        // Finally delete from Property table
-                        if ($all_success) {
-                            $sql = "DELETE FROM Property WHERE property_id = ?";
-                            $result = executeQuery($conn, $sql, "i", [$property_id]);
-                            
-                            if ($result['success']) {
-                                echo '<div class="message success">Property deleted successfully from the system!</div>';
-                            } else {
-                                echo '<div class="message error">Error deleting property: ' . htmlspecialchars($result['error']) . '</div>';
-                            }
-                        }
-                    }
+                if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'delete' && !empty($message)) {
+                    echo '<div class="message ' . $message_type . '">' . $message . '</div>';
                 }
             ?>
 
