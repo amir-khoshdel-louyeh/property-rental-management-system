@@ -1,6 +1,7 @@
 <?php
     include("config/Database_Manager.php");
     include("config/Validation.php");
+    include("handlers/rental_handler.php");
     include("layouts/Header.php");
 ?>
 
@@ -192,8 +193,7 @@
             <p>View all active and past rentals in the system:</p>
             
             <?php
-                $sql = "SELECT * FROM Rental";
-                $result = $conn->query($sql);
+                $result = getRentals($conn);
 
                 if ($result === FALSE) {
                     echo '<div class="message error">Error querying database: ' . htmlspecialchars($conn->error) . '</div>';
@@ -228,35 +228,8 @@
             <p>Please complete the form and press the Submit button:</p>
             
             <?php
-                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add') {
-                    $property_id = $_POST['property_id'] ?? 0;
-                    $renter_id = $_POST['renter_id'] ?? 0;
-                    $start_date = sanitizeText($_POST['start_date'] ?? '');
-                    $end_date = sanitizeText($_POST['end_date'] ?? '');
-                    $monthly_rent = $_POST['monthly_rent'] ?? 0;
-                    $security_deposit = $_POST['security_deposit'] ?? 0;
-                    
-                    if (!validateNumber($property_id) || !validateNumber($renter_id) || !validateNumber($monthly_rent) || !validateNumber($security_deposit)) {
-                        echo '<div class="message error">Invalid numeric input!</div>';
-                    } else if (empty($start_date) || !validateDate($start_date)) {
-                        echo '<div class="message error">Invalid start date (use YYYY-MM-DD)!</div>';
-                    } else if (empty($end_date) || !validateDate($end_date)) {
-                        echo '<div class="message error">Invalid end date (use YYYY-MM-DD)!</div>';
-                    } else if ($start_date >= $end_date) {
-                        echo '<div class="message error">Start date must be before end date!</div>';
-                    } else {
-                        $sql = "INSERT INTO Rental (property_id, renter_id, start_date, end_date, monthly_rent, security_deposit) 
-                                VALUES (?, ?, ?, ?, ?, ?)";
-                        
-                        $result = executeQuery($conn, $sql, "iissss", 
-                            [intval($property_id), intval($renter_id), $start_date, $end_date, floatval($monthly_rent), floatval($security_deposit)]);
-                        
-                        if ($result['success']) {
-                            echo '<div class="message success">Rental created successfully!</div>';
-                        } else {
-                            echo '<div class="message error">Try again! ' . htmlspecialchars($result['error']) . '</div>';
-                        }
-                    }
+                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add' && !empty($message)) {
+                    echo '<div class="message ' . $message_type . '">' . $message . '</div>';
                 }
             ?>
 
@@ -314,34 +287,8 @@
             <p>Enter the Rental ID to delete the record:</p>
 
             <?php
-                if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'delete') {
-                    $rental_id = $_POST['rental_id'] ?? 0;
-                    
-                    if (!validateNumber($rental_id)) {
-                        echo '<div class="message error">Invalid Rental ID!</div>';
-                    } else {
-                        $rental_id = intval($rental_id);
-                        
-                        // Delete Payment records first
-                        $sql = "DELETE FROM Payment WHERE rental_id = ?";
-                        $result = executeQuery($conn, $sql, "i", [$rental_id]);
-                        
-                        if (!$result['success']) {
-                            echo '<div class="message error">Error deleting payments: ' . htmlspecialchars($result['error']) . '</div>';
-                        } else {
-                            echo '<div class="message success">Payment records deleted successfully</div>';
-                            
-                            // Then delete Rental
-                            $sql = "DELETE FROM Rental WHERE rental_id = ?";
-                            $result = executeQuery($conn, $sql, "i", [$rental_id]);
-                            
-                            if ($result['success']) {
-                                echo '<div class="message success">Rental deleted successfully from the system!</div>';
-                            } else {
-                                echo '<div class="message error">Error deleting rental: ' . htmlspecialchars($result['error']) . '</div>';
-                            }
-                        }
-                    }
+                if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'delete' && !empty($message)) {
+                    echo '<div class="message ' . $message_type . '">' . $message . '</div>';
                 }
             ?>
 
