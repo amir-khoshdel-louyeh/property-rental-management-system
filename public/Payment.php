@@ -1,6 +1,7 @@
 <?php
     include("config/Database_Manager.php");
     include("config/Validation.php");
+    include("handlers/payment_handler.php");
     include("layouts/Header.php");
 ?>
 
@@ -192,8 +193,7 @@
             <p>View all payment history and transactions:</p>
             
             <?php
-                $sql = "SELECT * FROM Payment";
-                $result = $conn->query($sql);
+                $result = getPayments($conn);
 
                 if ($result === FALSE) {
                     echo '<div class="message error">Error querying database: ' . htmlspecialchars($conn->error) . '</div>';
@@ -228,29 +228,8 @@
             <p>Please complete the form and press the Submit button:</p>
             
             <?php
-                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add') {
-                    $rental_id = $_POST['rental_id'] ?? 0;
-                    $property_id = $_POST['property_id'] ?? 0;
-                    $amount = $_POST['amount'] ?? 0;
-                    $payment_date = sanitizeText($_POST['payment_date'] ?? '');
-
-                    if (!validateNumber($rental_id) || !validateNumber($property_id) || !validateNumber($amount)) {
-                        echo '<div class="message error">Invalid numeric input!</div>';
-                    } else if (empty($payment_date) || !validateDate($payment_date)) {
-                        echo '<div class="message error">Please enter a valid payment date (YYYY-MM-DD)!</div>';
-                    } else {
-                        $sql = "INSERT INTO Payment (rental_id, property_id, amount, payment_date) 
-                                VALUES (?, ?, ?, ?)";
-                        
-                        $result = executeQuery($conn, $sql, "iiis", 
-                            [intval($rental_id), intval($property_id), floatval($amount), $payment_date]);
-                        
-                        if ($result['success']) {
-                            echo '<div class="message success">Payment recorded successfully!</div>';
-                        } else {
-                            echo '<div class="message error">Try again! ' . htmlspecialchars($result['error']) . '</div>';
-                        }
-                    }
+                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add' && !empty($message)) {
+                    echo '<div class="message ' . $message_type . '">' . $message . '</div>';
                 }
             ?>
 
@@ -296,21 +275,8 @@
             <p>Enter the Payment ID to delete the record:</p>
 
             <?php
-                if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'delete') {
-                    $payment_id = $_POST['payment_id'] ?? 0;
-                    
-                    if (!validateNumber($payment_id)) {
-                        echo '<div class="message error">Invalid Payment ID!</div>';
-                    } else {
-                        $sql = "DELETE FROM Payment WHERE payment_id = ?";
-                        $result = executeQuery($conn, $sql, "i", [intval($payment_id)]);
-                        
-                        if ($result['success']) {
-                            echo '<div class="message success">Payment deleted successfully from the system!</div>';
-                        } else {
-                            echo '<div class="message error">Error deleting payment: ' . htmlspecialchars($result['error']) . '</div>';
-                        }
-                    }
+                if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'delete' && !empty($message)) {
+                    echo '<div class="message ' . $message_type . '">' . $message . '</div>';
                 }
             ?>
 
