@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../config/Database_Manager.php';
 require_once __DIR__ . '/../../config/Validation.php';
+require_once __DIR__ . '/entity_handler_common.php';
 
 $message = '';
 $message_type = '';
@@ -19,17 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $sql = "INSERT INTO PropertyServices (property_id, service_id) 
                     VALUES (?, ?)";
-            
-            $result = executeQuery($conn, $sql, "ii", 
-                [intval($property_id), intval($service_id)]);
-            
-            if ($result['success']) {
-                $message = 'Service link added successfully!';
-                $message_type = 'success';
-            } else {
-                $message = 'Try again! ' . htmlspecialchars($result['error']);
-                $message_type = 'error';
-            }
+
+            $response = executeWithMessage(
+                $conn,
+                $sql,
+                "ii",
+                [intval($property_id), intval($service_id)],
+                'Service link added successfully!',
+                'Try again! '
+            );
+
+            setHandlerMessage($message, $message_type, $response['message'], $response['type']);
         }
     }
     
@@ -41,23 +42,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message = 'Invalid Property Service ID!';
             $message_type = 'error';
         } else {
-            $sql = "DELETE FROM PropertyServices WHERE property_service_id = ?";
-            $result = executeQuery($conn, $sql, "i", [intval($propertyservice_id)]);
-            
-            if ($result['success']) {
-                $message = 'Property service mapping deleted successfully from the system!';
-                $message_type = 'success';
-            } else {
-                $message = 'Error deleting property service: ' . htmlspecialchars($result['error']);
-                $message_type = 'error';
-            }
+            $response = deleteByIdWithMessage(
+                $conn,
+                'PropertyServices',
+                'property_service_id',
+                $propertyservice_id,
+                'Property service mapping deleted successfully from the system!',
+                'Error deleting property service: '
+            );
+
+            setHandlerMessage($message, $message_type, $response['message'], $response['type']);
         }
     }
 }
 
 // Get all property services for view tab
 function getPropertyServices($conn) {
-    $sql = "SELECT * FROM PropertyServices";
-    return $conn->query($sql);
+    return fetchAllEntities($conn, 'PropertyServices');
 }
 ?>

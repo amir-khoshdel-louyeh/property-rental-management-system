@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../config/Database_Manager.php';
 require_once __DIR__ . '/../../config/Validation.php';
+require_once __DIR__ . '/entity_handler_common.php';
 
 $message = '';
 $message_type = '';
@@ -24,17 +25,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $sql = "INSERT INTO Payment (rental_id, property_id, amount, payment_date) 
                     VALUES (?, ?, ?, ?)";
-            
-            $result = executeQuery($conn, $sql, "iiis", 
-                [intval($rental_id), intval($property_id), floatval($amount), $payment_date]);
-            
-            if ($result['success']) {
-                $message = 'Payment recorded successfully!';
-                $message_type = 'success';
-            } else {
-                $message = 'Try again! ' . htmlspecialchars($result['error']);
-                $message_type = 'error';
-            }
+
+            $response = executeWithMessage(
+                $conn,
+                $sql,
+                "iiis",
+                [intval($rental_id), intval($property_id), floatval($amount), $payment_date],
+                'Payment recorded successfully!',
+                'Try again! '
+            );
+
+            setHandlerMessage($message, $message_type, $response['message'], $response['type']);
         }
     }
     
@@ -46,23 +47,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message = 'Invalid Payment ID!';
             $message_type = 'error';
         } else {
-            $sql = "DELETE FROM Payment WHERE payment_id = ?";
-            $result = executeQuery($conn, $sql, "i", [intval($payment_id)]);
-            
-            if ($result['success']) {
-                $message = 'Payment deleted successfully from the system!';
-                $message_type = 'success';
-            } else {
-                $message = 'Error deleting payment: ' . htmlspecialchars($result['error']);
-                $message_type = 'error';
-            }
+            $response = deleteByIdWithMessage(
+                $conn,
+                'Payment',
+                'payment_id',
+                $payment_id,
+                'Payment deleted successfully from the system!',
+                'Error deleting payment: '
+            );
+
+            setHandlerMessage($message, $message_type, $response['message'], $response['type']);
         }
     }
 }
 
 // Get all payments for view tab
 function getPayments($conn) {
-    $sql = "SELECT * FROM Payment";
-    return $conn->query($sql);
+    return fetchAllEntities($conn, 'Payment');
 }
 ?>

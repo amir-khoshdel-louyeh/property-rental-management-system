@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../config/Database_Manager.php';
 require_once __DIR__ . '/../../config/Validation.php';
+require_once __DIR__ . '/entity_handler_common.php';
 
 $message = '';
 $message_type = '';
@@ -27,17 +28,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $sql = "INSERT INTO Inspection (property_id, inspection_date, findings, conducted_by) 
                     VALUES (?, ?, ?, ?)";
-            
-            $result = executeQuery($conn, $sql, "issi", 
-                [intval($property_id), $inspection_date, $findings, intval($conducted_by)]);
-            
-            if ($result['success']) {
-                $message = 'Inspection recorded successfully!';
-                $message_type = 'success';
-            } else {
-                $message = 'Try again! ' . htmlspecialchars($result['error']);
-                $message_type = 'error';
-            }
+
+            $response = executeWithMessage(
+                $conn,
+                $sql,
+                "issi",
+                [intval($property_id), $inspection_date, $findings, intval($conducted_by)],
+                'Inspection recorded successfully!',
+                'Try again! '
+            );
+
+            setHandlerMessage($message, $message_type, $response['message'], $response['type']);
         }
     }
     
@@ -49,23 +50,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message = 'Invalid Inspection ID!';
             $message_type = 'error';
         } else {
-            $sql = "DELETE FROM Inspection WHERE inspection_id = ?";
-            $result = executeQuery($conn, $sql, "i", [intval($inspection_id)]);
-            
-            if ($result['success']) {
-                $message = 'Inspection deleted successfully from the system!';
-                $message_type = 'success';
-            } else {
-                $message = 'Error deleting inspection: ' . htmlspecialchars($result['error']);
-                $message_type = 'error';
-            }
+            $response = deleteByIdWithMessage(
+                $conn,
+                'Inspection',
+                'inspection_id',
+                $inspection_id,
+                'Inspection deleted successfully from the system!',
+                'Error deleting inspection: '
+            );
+
+            setHandlerMessage($message, $message_type, $response['message'], $response['type']);
         }
     }
 }
 
 // Get all inspections for view tab
 function getInspections($conn) {
-    $sql = "SELECT * FROM Inspection";
-    return $conn->query($sql);
+    return fetchAllEntities($conn, 'Inspection');
 }
 ?>
