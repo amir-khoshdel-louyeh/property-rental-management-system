@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../config/Database_Manager.php';
 require_once __DIR__ . '/../../config/Validation.php';
+require_once __DIR__ . '/entity_handler_common.php';
 
 $message = '';
 $message_type = '';
@@ -32,17 +33,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $sql = "INSERT INTO Rental (property_id, renter_id, start_date, end_date, monthly_rent, security_deposit) 
                     VALUES (?, ?, ?, ?, ?, ?)";
-            
-            $result = executeQuery($conn, $sql, "iissss", 
-                [intval($property_id), intval($renter_id), $start_date, $end_date, floatval($monthly_rent), floatval($security_deposit)]);
-            
-            if ($result['success']) {
-                $message = 'Rental created successfully!';
-                $message_type = 'success';
-            } else {
-                $message = 'Try again! ' . htmlspecialchars($result['error']);
-                $message_type = 'error';
-            }
+
+            $response = executeWithMessage(
+                $conn,
+                $sql,
+                "iissss",
+                [intval($property_id), intval($renter_id), $start_date, $end_date, floatval($monthly_rent), floatval($security_deposit)],
+                'Rental created successfully!',
+                'Try again! '
+            );
+
+            setHandlerMessage($message, $message_type, $response['message'], $response['type']);
         }
     }
     
@@ -55,26 +56,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message_type = 'error';
         } else {
             $rental_id = intval($rental_id);
-            
-            // Delete Payment records first
-            $sql = "DELETE FROM Payment WHERE rental_id = ?";
-            $result = executeQuery($conn, $sql, "i", [$rental_id]);
-            
-            if (!$result['success']) {
-                $message = 'Error deleting payments: ' . htmlspecialchars($result['error']);
-                $message_type = 'error';
+
+            $dependenciesResult = deleteDependenciesById($conn, $rental_id, [
+                ['table' => 'Payment', 'column' => 'rental_id', 'label' => 'payments']
+            ]);
+
+            if (!$dependenciesResult['success']) {
+                setHandlerMessage(
+                    $message,
+                    $message_type,
+                    implode('<br>', $dependenciesResult['errors']),
+                    'error'
+                );
             } else {
-                // Then delete Rental
-                $sql = "DELETE FROM Rental WHERE rental_id = ?";
-                $result = executeQuery($conn, $sql, "i", [$rental_id]);
-                
-                if ($result['success']) {
-                    $message = 'Rental deleted successfully from the system!';
-                    $message_type = 'success';
-                } else {
-                    $message = 'Error deleting rental: ' . htmlspecialchars($result['error']);
-                    $message_type = 'error';
-                }
+                $response = deleteByIdWithMessage(
+                    $conn,
+                    'Rental',
+                    'rental_id',
+                    $rental_id,
+                    'Rental deleted successfully from the system!',
+                    'Error deleting rental: '
+                );
+
+                setHandlerMessage($message, $message_type, $response['message'], $response['type']);
             }
         }
     }
@@ -82,7 +86,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Get all rentals for view tab
 function getRentals($conn) {
-    $sql = "SELECT * FROM Rental";
-    return $conn->query($sql);
+    return fetchAllEntities($conn, 'Rental');
 }
 ?>
