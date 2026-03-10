@@ -1,6 +1,7 @@
 <?php
     include("config/Database_Manager.php");
     include("config/Validation.php");
+    include("handlers/inspection_handler.php");
     include("layouts/Header.php");
 ?>
 
@@ -194,8 +195,7 @@
             <p>View all inspection reports and history:</p>
             
             <?php
-                $sql = "SELECT * FROM Inspection";
-                $result = $conn->query($sql);
+                $result = getInspections($conn);
 
                 if ($result === FALSE) {
                     echo '<div class="message error">Error querying database: ' . htmlspecialchars($conn->error) . '</div>';
@@ -230,31 +230,8 @@
             <p>Please complete the form and press the Submit button:</p>
             
             <?php
-                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add') {
-                    $property_id = $_POST['property_id'] ?? 0;
-                    $inspection_date = sanitizeText($_POST['inspection_date'] ?? '');
-                    $findings = sanitizeText($_POST['findings'] ?? '');
-                    $conducted_by = $_POST['conducted_by'] ?? 0;
-
-                    if (!validateNumber($property_id) || !validateNumber($conducted_by)) {
-                        echo '<div class="message error">Invalid numeric input!</div>';
-                    } else if (empty($inspection_date) || !validateDate($inspection_date)) {
-                        echo '<div class="message error">Invalid inspection date (use YYYY-MM-DD)!</div>';
-                    } else if (empty($findings)) {
-                        echo '<div class="message error">Please enter inspection findings!</div>';
-                    } else {
-                        $sql = "INSERT INTO Inspection (property_id, inspection_date, findings, conducted_by) 
-                                VALUES (?, ?, ?, ?)";
-                        
-                        $result = executeQuery($conn, $sql, "issi", 
-                            [intval($property_id), $inspection_date, $findings, intval($conducted_by)]);
-                        
-                        if ($result['success']) {
-                            echo '<div class="message success">Inspection recorded successfully!</div>';
-                        } else {
-                            echo '<div class="message error">Try again! ' . htmlspecialchars($result['error']) . '</div>';
-                        }
-                    }
+                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add' && !empty($message)) {
+                    echo '<div class="message ' . $message_type . '">' . $message . '</div>';
                 }
             ?>
 
@@ -298,21 +275,8 @@
             <p>Enter the Inspection ID to delete the record:</p>
 
             <?php
-                if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'delete') {
-                    $inspection_id = $_POST['inspection_id'] ?? 0;
-                    
-                    if (!validateNumber($inspection_id)) {
-                        echo '<div class="message error">Invalid Inspection ID!</div>';
-                    } else {
-                        $sql = "DELETE FROM Inspection WHERE inspection_id = ?";
-                        $result = executeQuery($conn, $sql, "i", [intval($inspection_id)]);
-                        
-                        if ($result['success']) {
-                            echo '<div class="message success">Inspection deleted successfully from the system!</div>';
-                        } else {
-                            echo '<div class="message error">Error deleting inspection: ' . htmlspecialchars($result['error']) . '</div>';
-                        }
-                    }
+                if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'delete' && !empty($message)) {
+                    echo '<div class="message ' . $message_type . '">' . $message . '</div>';
                 }
             ?>
 
