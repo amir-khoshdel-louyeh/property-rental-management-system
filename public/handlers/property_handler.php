@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../config/Database_Manager.php';
 require_once __DIR__ . '/../../config/Validation.php';
+require_once __DIR__ . '/entity_handler_common.php';
 
 $message = '';
 $message_type = '';
@@ -31,18 +32,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $sql = "INSERT INTO Property (property_type, addres, city, area_property, bedrooms, descriptions, rent_sale, price, landlord_id, zip_code) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            
-            $result = executeQuery($conn, $sql, "ssssissssi", 
-                [$property_type, $addres, $city, $area_property, intval($bedrooms), 
-                 $descriptions, $rent_sale, floatval($price), intval($landlord_id), $zip_code]);
-            
-            if ($result['success']) {
-                $message = 'Property added successfully!';
-                $message_type = 'success';
-            } else {
-                $message = 'Try again! ' . htmlspecialchars($result['error']);
-                $message_type = 'error';
-            }
+
+            $response = executeWithMessage(
+                $conn,
+                $sql,
+                "ssssissssi",
+                [$property_type, $addres, $city, $area_property, intval($bedrooms),
+                 $descriptions, $rent_sale, floatval($price), intval($landlord_id), $zip_code],
+                'Property added successfully!',
+                'Try again! '
+            );
+
+            setHandlerMessage($message, $message_type, $response['message'], $response['type']);
         }
     }
     
@@ -55,39 +56,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message_type = 'error';
         } else {
             $property_id = intval($property_id);
-            
-            // Delete from related tables first (referential integrity)
-            $tables_to_delete = ['Payment', 'Rental', 'PropertyServices', 'Inspection'];
-            $all_success = true;
-            $delete_messages = [];
-            
-            foreach ($tables_to_delete as $table) {
-                $sql = "DELETE FROM " . $table . " WHERE property_id = ?";
-                $result = executeQuery($conn, $sql, "i", [$property_id]);
-                
-                if (!$result['success']) {
-                    $delete_messages[] = 'Error deleting from ' . htmlspecialchars($table) . ': ' . htmlspecialchars($result['error']);
-                    $all_success = false;
-                } else {
-                    $delete_messages[] = htmlspecialchars($table) . ' records deleted successfully';
-                }
-            }
-            
-            // Finally delete from Property table
-            if ($all_success) {
-                $sql = "DELETE FROM Property WHERE property_id = ?";
-                $result = executeQuery($conn, $sql, "i", [$property_id]);
-                
-                if ($result['success']) {
-                    $message = 'Property deleted successfully from the system!';
-                    $message_type = 'success';
-                } else {
-                    $message = 'Error deleting property: ' . htmlspecialchars($result['error']);
-                    $message_type = 'error';
-                }
+
+            $dependenciesResult = deleteDependenciesById($conn, $property_id, [
+                ['table' => 'Payment', 'column' => 'property_id'],
+                ['table' => 'Rental', 'column' => 'property_id'],
+                ['table' => 'PropertyServices', 'column' => 'property_id'],
+                ['table' => 'Inspection', 'column' => 'property_id']
+            ]);
+
+            if ($dependenciesResult['success']) {
+                $response = deleteByIdWithMessage(
+                    $conn,
+                    'Property',
+                    'property_id',
+                    $property_id,
+                    'Property deleted successfully from the system!',
+                    'Error deleting property: '
+                );
+
+                setHandlerMessage($message, $message_type, $response['message'], $response['type']);
             } else {
-                $message = implode('<br>', $delete_messages);
-                $message_type = 'error';
+                setHandlerMessage(
+                    $message,
+                    $message_type,
+                    implode('<br>', $dependenciesResult['errors']),
+                    'error'
+                );
             }
         }
     }
@@ -95,7 +89,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Get all properties for view tab
 function getProperties($conn) {
-    $sql = "SELECT * FROM Property";
-    return $conn->query($sql);
+    return fetchAllEntities($conn, 'Property');
 }
 ?>

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../config/Database_Manager.php';
 require_once __DIR__ . '/../../config/Validation.php';
+require_once __DIR__ . '/entity_handler_common.php';
 
 $message = '';
 $message_type = '';
@@ -27,17 +28,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $sql = "INSERT INTO Landlord (first_name, last_name, phone_number, email) 
                     VALUES (?, ?, ?, ?)";
-            
-            $result = executeQuery($conn, $sql, "ssss", 
-                [$first_name, $last_name, $phone_number, $email]);
-            
-            if ($result['success']) {
-                $message = 'Landlord added successfully!';
-                $message_type = 'success';
-            } else {
-                $message = 'Try again! ' . htmlspecialchars($result['error']);
-                $message_type = 'error';
-            }
+
+            $response = executeWithMessage(
+                $conn,
+                $sql,
+                "ssss",
+                [$first_name, $last_name, $phone_number, $email],
+                'Landlord added successfully!',
+                'Try again! '
+            );
+
+            setHandlerMessage($message, $message_type, $response['message'], $response['type']);
         }
     }
     
@@ -50,42 +51,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message_type = 'error';
         } else {
             $landlord_id = intval($landlord_id);
-            
-            // Delete related records first (referential integrity)
-            $tables_to_delete = [
+
+            $dependenciesResult = deleteDependenciesById($conn, $landlord_id, [
                 ['table' => 'Inspection', 'column' => 'conducted_by'],
                 ['table' => 'Property', 'column' => 'landlord_id']
-            ];
-            $all_success = true;
-            $delete_messages = [];
-            
-            foreach ($tables_to_delete as $delete_info) {
-                $sql = "DELETE FROM " . $delete_info['table'] . " WHERE " . $delete_info['column'] . " = ?";
-                $result = executeQuery($conn, $sql, "i", [$landlord_id]);
-                
-                if (!$result['success']) {
-                    $delete_messages[] = 'Error deleting from ' . htmlspecialchars($delete_info['table']) . ': ' . htmlspecialchars($result['error']);
-                    $all_success = false;
-                } else {
-                    $delete_messages[] = htmlspecialchars($delete_info['table']) . ' records deleted successfully';
-                }
-            }
-            
-            // Finally delete from Landlord table
-            if ($all_success) {
-                $sql = "DELETE FROM Landlord WHERE landlord_id = ?";
-                $result = executeQuery($conn, $sql, "i", [$landlord_id]);
-                
-                if ($result['success']) {
-                    $message = 'Landlord deleted successfully from the system!';
-                    $message_type = 'success';
-                } else {
-                    $message = 'Error deleting landlord: ' . htmlspecialchars($result['error']);
-                    $message_type = 'error';
-                }
+            ]);
+
+            if ($dependenciesResult['success']) {
+                $response = deleteByIdWithMessage(
+                    $conn,
+                    'Landlord',
+                    'landlord_id',
+                    $landlord_id,
+                    'Landlord deleted successfully from the system!',
+                    'Error deleting landlord: '
+                );
+
+                setHandlerMessage($message, $message_type, $response['message'], $response['type']);
             } else {
-                $message = implode('<br>', $delete_messages);
-                $message_type = 'error';
+                setHandlerMessage(
+                    $message,
+                    $message_type,
+                    implode('<br>', $dependenciesResult['errors']),
+                    'error'
+                );
             }
         }
     }
@@ -93,7 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Get all landlords for view tab
 function getLandlords($conn) {
-    $sql = "SELECT * FROM Landlord";
-    return $conn->query($sql);
+    return fetchAllEntities($conn, 'Landlord');
 }
 ?>
