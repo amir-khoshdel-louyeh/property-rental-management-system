@@ -1,6 +1,7 @@
 <?php
     include("config/Database_Manager.php");
     include("config/Validation.php");
+    include("handlers/services_handler.php");
     include("layouts/Header.php");
 ?>
 
@@ -181,8 +182,7 @@
             <p>View all services offered in the system:</p>
             
             <?php
-                $sql = "SELECT * FROM services";
-                $result = $conn->query($sql);
+                $result = getServices($conn);
 
                 if ($result === FALSE) {
                     echo '<div class="message error">Error querying database: ' . htmlspecialchars($conn->error) . '</div>';
@@ -217,23 +217,8 @@
             <p>Please complete the form and press the Submit button:</p>
             
             <?php
-                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add') {
-                    $services_name = sanitizeText($_POST['services_name'] ?? '');
-
-                    if (empty($services_name)) {
-                        echo '<div class="message error">Please enter a service name!</div>';
-                    } else {
-                        $sql = "INSERT INTO services (services_name) 
-                                VALUES (?)";
-                        
-                        $result = executeQuery($conn, $sql, "s", [$services_name]);
-                        
-                        if ($result['success']) {
-                            echo '<div class="message success">Service added successfully!</div>';
-                        } else {
-                            echo '<div class="message error">Try again! ' . htmlspecialchars($result['error']) . '</div>';
-                        }
-                    }
+                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add' && !empty($message)) {
+                    echo '<div class="message ' . $message_type . '">' . $message . '</div>';
                 }
             ?>
 
@@ -260,34 +245,8 @@
             <p>Enter the Service ID to delete the record:</p>
 
             <?php
-                if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'delete') {
-                    $service_id = $_POST['service_id'] ?? 0;
-                    
-                    if (!validateNumber($service_id)) {
-                        echo '<div class="message error">Invalid Service ID!</div>';
-                    } else {
-                        $service_id = intval($service_id);
-                        
-                        // Delete PropertyServices records first
-                        $sql = "DELETE FROM PropertyServices WHERE service_id = ?";
-                        $result = executeQuery($conn, $sql, "i", [$service_id]);
-                        
-                        if (!$result['success']) {
-                            echo '<div class="message error">Error deleting property services: ' . htmlspecialchars($result['error']) . '</div>';
-                        } else {
-                            echo '<div class="message success">Property services records deleted successfully</div>';
-                            
-                            // Then delete Service
-                            $sql = "DELETE FROM services WHERE service_id = ?";
-                            $result = executeQuery($conn, $sql, "i", [$service_id]);
-                            
-                            if ($result['success']) {
-                                echo '<div class="message success">Service deleted successfully from the system!</div>';
-                            } else {
-                                echo '<div class="message error">Error deleting service: ' . htmlspecialchars($result['error']) . '</div>';
-                            }
-                        }
-                    }
+                if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'delete' && !empty($message)) {
+                    echo '<div class="message ' . $message_type . '">' . $message . '</div>';
                 }
             ?>
 
