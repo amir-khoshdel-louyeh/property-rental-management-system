@@ -6,6 +6,10 @@ apiResponse(200, [
     'service' => 'property-rental-management-system-api',
     'version' => '1.0',
     'endpoints' => [
+        'register' => '/api/register.php',
+        'login' => '/api/login.php',
+        'me' => '/api/me.php',
+        'logout' => '/api/logout.php',
         'landlords' => '/api/landlords.php',
         'renters' => '/api/renters.php',
         'properties' => '/api/properties.php',
