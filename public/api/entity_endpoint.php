@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/_common.php';
+require_once __DIR__ . '/_auth.php';
 require_once __DIR__ . '/entities_config.php';
 
 function handleEntityRequest($entityKey) {
@@ -34,16 +35,19 @@ function handleEntityRequest($entityKey) {
     }
 
     if ($method === 'POST') {
+        apiRequireAuth();
         $data = apiInputData();
         handleCreate($conn, $table, $primaryKey, $fields, $required, $data);
     }
 
     if ($method === 'PUT' || $method === 'PATCH') {
+        apiRequireAuth();
         $data = apiInputData();
         handleUpdate($conn, $table, $primaryKey, $fields, $data);
     }
 
     if ($method === 'DELETE') {
+        apiRequireAuth();
         $data = apiInputData();
         handleDelete($conn, $table, $primaryKey, $data);
     }
