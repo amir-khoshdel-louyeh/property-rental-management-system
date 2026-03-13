@@ -1,5 +1,9 @@
 <?php
 
+require_once __DIR__ . '/ErrorHandler.php';
+
+AppErrorHandler::init(AppErrorHandler::detectContext());
+
     $db_server = getenv('DB_SERVER') ?: 'localhost';
     $db_user = getenv('DB_USER') ?: 'root';
     $db_pass = getenv('DB_PASS') ?: '';
@@ -20,8 +24,7 @@
     catch(Exception $e)
     {
         $error_log[] = "Database Error: " . $e->getMessage();
-        error_log("Database Connection Error: " . $e->getMessage());
-        die("Database connection failed. Please contact support.");
+        AppErrorHandler::fail(500, "Database connection failed. Please contact support.", $e);
     }
     if($conn)
     {
