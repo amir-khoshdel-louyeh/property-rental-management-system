@@ -30,15 +30,18 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Verify CSRF token
-if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) {
+if (!wantsJsonResponse() && (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token']))) {
     if (!wantsJsonResponse()) {
         respondError('Invalid security token. Please try again.', 'login.php', 403);
     }
 }
 
+// Get request data
+$requestData = getRequestData();
+
 // Get form data
-$username = trim($_POST['username'] ?? '');
-$password = $_POST['password'] ?? '';
+$username = trim($requestData['username'] ?? '');
+$password = $requestData['password'] ?? '';
 
 // Validate input
 if (empty($username) || empty($password)) {
