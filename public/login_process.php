@@ -2,25 +2,38 @@
 require_once '../config/Database_Manager.php';
 require_once '../config/User.php';
 require_once '../config/session.php';
+require_once '../config/response_helpers.php';
 
 startSession();
 
 // Check if already logged in
 if (isLoggedIn()) {
-    header('Location: index.php');
-    exit();
+    respondSuccess('Already logged in.', 'index.php', 200, [
+        'user_id' => getCurrentUserId(),
+        'username' => getCurrentUsername(),
+        'email' => getCurrentUserEmail(),
+        'role' => getCurrentUserRole()
+    ]);
 }
 
 // Check if form was submitted
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    if (wantsJsonResponse()) {
+        sendJson(405, [
+            'success' => false,
+            'message' => 'Method not allowed.'
+        ]);
+    }
+
     header('Location: login.php');
     exit();
 }
 
 // Verify CSRF token
 if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) {
-    header('Location: login.php?error=Invalid security token. Please try again.');
-    exit();
+    if (!wantsJsonResponse()) {
+        respondError('Invalid security token. Please try again.', 'login.php', 403);
+    }
 }
 
 // Get form data
@@ -29,15 +42,18 @@ $password = $_POST['password'] ?? '';
 
 // Validate input
 if (empty($username) || empty($password)) {
-    header('Location: login.php?error=Please fill in all fields');
-    exit();
+    respondValidationErrors('Please fill in all fields', 'login.php');
 }
 
 // Check rate limiting
 $rate_check = checkLoginAttempts($username);
 if (is_array($rate_check) && isset($rate_check['locked'])) {
-    header('Location: login.php?error=Too many failed attempts. Please try again in ' . $rate_check['minutes'] . ' minutes.');
-    exit();
+    respondError(
+        'Too many failed attempts. Please try again in ' . $rate_check['minutes'] . ' minutes.',
+        'login.php',
+        429,
+        ['minutes' => $rate_check['minutes']]
+    );
 }
 
 // Create User instance
@@ -60,16 +76,17 @@ if ($result['success']) {
     
     // Regenerate session ID for security
     regenerateSession();
-    
-    // Redirect to home
-    header('Location: index.php?success=Welcome back, ' . htmlspecialchars($result['user']['username']));
-    exit();
+
+    respondSuccess(
+        'Welcome back, ' . $result['user']['username'],
+        'index.php',
+        200,
+        ['user' => $result['user']]
+    );
 } else {
     // Record failed login attempt
     recordFailedLogin($username);
     
-    // Redirect back to login with error
-    header('Location: login.php?error=' . urlencode($result['message']));
-    exit();
+    respondError($result['message'], 'login.php', 401);
 }
 ?>
