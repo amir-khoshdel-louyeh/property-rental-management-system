@@ -28,6 +28,27 @@ function sendJson($statusCode, $payload) {
     exit();
 }
 
+function getRequestData() {
+    if (!empty($_POST)) {
+        return $_POST;
+    }
+
+    $raw = file_get_contents('php://input');
+    if ($raw === false || trim($raw) === '') {
+        return [];
+    }
+
+    $decoded = json_decode($raw, true);
+    if (json_last_error() !== JSON_ERROR_NONE || !is_array($decoded)) {
+        sendJson(400, [
+            'success' => false,
+            'message' => 'Invalid JSON request body.'
+        ]);
+    }
+
+    return $decoded;
+}
+
 function respondError($message, $redirectPath, $statusCode = 400, $extra = []) {
     if (wantsJsonResponse()) {
         sendJson($statusCode, array_merge([
