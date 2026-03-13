@@ -26,16 +26,19 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Verify CSRF token
-if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) {
+if (!wantsJsonResponse() && (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token']))) {
     if (!wantsJsonResponse()) {
         respondError('Invalid security token. Please try again.', 'change_password.php', 403);
     }
 }
 
+// Get request data
+$requestData = getRequestData();
+
 // Get form data
-$current_password = $_POST['current_password'] ?? '';
-$new_password = $_POST['new_password'] ?? '';
-$confirm_new_password = $_POST['confirm_new_password'] ?? '';
+$current_password = $requestData['current_password'] ?? '';
+$new_password = $requestData['new_password'] ?? '';
+$confirm_new_password = $requestData['confirm_new_password'] ?? '';
 
 // Validate input
 if (empty($current_password) || empty($new_password) || empty($confirm_new_password)) {
