@@ -6,6 +6,7 @@
 
 require_once 'session.php';
 require_once 'RoleConstants.php';
+require_once 'ErrorHandler.php';
 
 class AuthorizationHelper {
     
@@ -144,8 +145,7 @@ class AuthorizationHelper {
      */
     public static function requirePermission($callable) {
         if (!call_user_func($callable)) {
-            header('HTTP/1.1 403 Forbidden');
-            die('Access Denied. You do not have permission to perform this action.');
+            AppErrorHandler::forbidden('Access Denied. You do not have permission to perform this action.');
         }
     }
     
