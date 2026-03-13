@@ -31,18 +31,21 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Verify CSRF token
-if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) {
+if (!wantsJsonResponse() && (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token']))) {
     if (!wantsJsonResponse()) {
         respondError('Invalid security token. Please try again.', 'register.php', 403);
     }
 }
 
+// Get request data
+$requestData = getRequestData();
+
 // Get form data
-$username = trim($_POST['username'] ?? '');
-$email = trim($_POST['email'] ?? '');
-$password = $_POST['password'] ?? '';
-$confirm_password = $_POST['confirm_password'] ?? '';
-$role = trim($_POST['role'] ?? 'Renter'); // Default to Renter
+$username = trim($requestData['username'] ?? '');
+$email = trim($requestData['email'] ?? '');
+$password = $requestData['password'] ?? '';
+$confirm_password = $requestData['confirm_password'] ?? '';
+$role = trim($requestData['role'] ?? 'Renter'); // Default to Renter
 
 // Validate role
 $valid_roles = ['Admin', 'Landlord', 'Renter'];
