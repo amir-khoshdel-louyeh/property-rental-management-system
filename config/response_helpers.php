@@ -1,5 +1,9 @@
 <?php
 
+require_once __DIR__ . '/ErrorHandler.php';
+
+AppErrorHandler::init(AppErrorHandler::detectContext());
+
 function wantsJsonResponse() {
     $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
     $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
