@@ -123,11 +123,32 @@ class AppErrorHandler {
     }
 
     private static function logMessage($message, $context = []) {
+        $timestamp = date('Y-m-d H:i:s');
+        $logMessage = "[$timestamp] $message";
+        
         if (!empty($context)) {
-            $message .= ' | context=' . json_encode($context);
+            $logMessage .= ' | context=' . json_encode($context);
         }
 
-        error_log($message);
+        error_log($logMessage);
+        
+        // Also log to file if configured
+        $logFile = getenv('ERROR_LOG_FILE');
+        if ($logFile && is_writable(dirname($logFile))) {
+            error_log($logMessage . PHP_EOL, 3, $logFile);
+        }
+    }
+    
+    public static function logInfo($message, $context = []) {
+        self::logMessage("[INFO] $message", $context);
+    }
+    
+    public static function logWarning($message, $context = []) {
+        self::logMessage("[WARNING] $message", $context);
+    }
+    
+    public static function logError($message, $context = []) {
+        self::logMessage("[ERROR] $message", $context);
     }
 
     private static function respond($statusCode, $payload) {
