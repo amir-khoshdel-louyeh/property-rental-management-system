@@ -15,8 +15,26 @@ $password = $data['password'] ?? '';
 $confirmPassword = $data['confirm_password'] ?? '';
 $role = trim($data['role'] ?? Role::RENTER);
 
-if ($username === '' || $email === '' || $password === '' || $confirmPassword === '') {
-    throw new BadRequestException('username, email, password, and confirm_password are required.');
+// Return exactly which required fields are missing.
+$missingFields = [];
+if ($username === '') {
+    $missingFields[] = 'username';
+}
+if ($email === '') {
+    $missingFields[] = 'email';
+}
+if ($password === '') {
+    $missingFields[] = 'password';
+}
+if ($confirmPassword === '') {
+    $missingFields[] = 'confirm_password';
+}
+
+if (!empty($missingFields)) {
+    throw new ValidationException(
+        'Missing required fields: ' . implode(', ', $missingFields) . '.',
+        ['missing' => $missingFields]
+    );
 }
 
 if (!Role::isValid($role)) {
