@@ -16,20 +16,14 @@ function apiRequireAuth() {
 
     $token = apiGetBearerToken();
     if ($token === null || $token === '') {
-        apiResponse(401, [
-            'success' => false,
-            'error' => 'Missing Bearer token.'
-        ]);
+        throw new AuthenticationException('Missing Bearer token.');
     }
 
     $tokenService = new ApiToken($conn);
     $result = $tokenService->getUserFromToken($token);
 
     if (!$result['success']) {
-        apiResponse(401, [
-            'success' => false,
-            'error' => $result['message']
-        ]);
+        throw new AuthenticationException($result['message']);
     }
 
     return [
@@ -40,9 +34,6 @@ function apiRequireAuth() {
 
 function apiRequireRole($currentRole, $allowedRoles) {
     if (!in_array($currentRole, $allowedRoles, true)) {
-        apiResponse(403, [
-            'success' => false,
-            'error' => 'Insufficient permissions.'
-        ]);
+        throw new AuthorizationException('Insufficient permissions.');
     }
 }
