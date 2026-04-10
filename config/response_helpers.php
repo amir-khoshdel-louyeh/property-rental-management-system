@@ -44,16 +44,19 @@ function getRequestData() {
 
     $decoded = json_decode($raw, true);
     if (json_last_error() !== JSON_ERROR_NONE || !is_array($decoded)) {
-        sendJson(400, [
-            'success' => false,
-            'message' => 'Invalid JSON request body.'
-        ]);
+        throw new BadRequestException('Invalid JSON request body.');
     }
 
     return $decoded;
 }
 
 function respondError($message, $redirectPath, $statusCode = 400, $extra = []) {
+        AppErrorHandler::logWarning('Error response', [
+            'message' => $message,
+            'statusCode' => $statusCode,
+            'extra' => $extra
+        ]);
+    
     if (wantsJsonResponse()) {
         sendJson($statusCode, array_merge([
             'success' => false,
