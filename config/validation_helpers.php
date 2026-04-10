@@ -11,7 +11,7 @@ function validatePasswordStrength($password, $min_length = 6) {
     if (strlen($password) < $min_length) {
         return [
             'valid' => false,
-            'message' => "Password must be at least {$min_length} characters long"
+            'message' => "Password must be at least {$min_length} characters long."
         ];
     }
     
@@ -26,7 +26,7 @@ function validatePasswordStrength($password, $min_length = 6) {
     }
     */
     
-    return ['valid' => true, 'message' => 'Password is valid'];
+    return ['valid' => true, 'message' => 'Password is valid.', 'rule' => "min_length:{$min_length}"];
 }
 
 /**
@@ -41,30 +41,31 @@ function sanitizeUsername($username) {
  * Validate username format
  */
 function validateUsername($username, $min_length = 3, $max_length = 50) {
-    $sanitized = sanitizeUsername($username);
+    $trimmed = trim($username);
+    $sanitized = sanitizeUsername($trimmed);
+
+    if ($trimmed !== $sanitized) {
+        return [
+            'valid' => false,
+            'message' => 'Username can only contain letters, numbers, underscores, and hyphens.'
+        ];
+    }
     
     if (strlen($sanitized) < $min_length) {
         return [
             'valid' => false,
-            'message' => "Username must be at least {$min_length} characters long"
+            'message' => "Username must be at least {$min_length} characters long."
         ];
     }
     
     if (strlen($sanitized) > $max_length) {
         return [
             'valid' => false,
-            'message' => "Username must not exceed {$max_length} characters"
+            'message' => "Username must not exceed {$max_length} characters."
         ];
     }
     
-    if (!preg_match('/^[a-zA-Z0-9_-]+$/', $sanitized)) {
-        return [
-            'valid' => false,
-            'message' => 'Username can only contain letters, numbers, underscores, and hyphens'
-        ];
-    }
-    
-    return ['valid' => true, 'message' => 'Username is valid', 'sanitized' => $sanitized];
+    return ['valid' => true, 'message' => 'Username is valid.', 'sanitized' => $sanitized];
 }
 
 /**
@@ -76,14 +77,14 @@ function validateEmail($email) {
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         return [
             'valid' => false,
-            'message' => 'Invalid email format'
+            'message' => 'Email address format is invalid. Use a format like name@example.com.'
         ];
     }
     
     // Additional check for disposable email domains (optional)
     // You can add a list of disposable email domains to block
     
-    return ['valid' => true, 'message' => 'Email is valid', 'sanitized' => $email];
+    return ['valid' => true, 'message' => 'Email is valid.', 'sanitized' => $email];
 }
 
 /**
