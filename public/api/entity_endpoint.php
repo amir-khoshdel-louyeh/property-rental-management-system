@@ -9,10 +9,7 @@ function handleEntityRequest($entityKey) {
 
     $configs = getEntityConfigs();
     if (!isset($configs[$entityKey])) {
-        apiResponse(404, [
-            'success' => false,
-            'error' => 'Unknown entity endpoint.'
-        ]);
+        throw new NotFoundException('Unknown entity endpoint.');
     }
 
     $config = $configs[$entityKey];
@@ -22,10 +19,7 @@ function handleEntityRequest($entityKey) {
     $required = $config['required'];
 
     if (!isSafeIdentifier($table) || !isSafeIdentifier($primaryKey)) {
-        apiResponse(500, [
-            'success' => false,
-            'error' => 'Unsafe entity configuration.'
-        ]);
+        throw new ConfigurationException('Unsafe entity configuration: ' . $entityKey);
     }
 
     $method = apiMethod();
@@ -52,10 +46,7 @@ function handleEntityRequest($entityKey) {
         handleDelete($conn, $table, $primaryKey, $data);
     }
 
-    apiResponse(405, [
-        'success' => false,
-        'error' => 'Method not allowed.'
-    ]);
+    throw new MethodNotAllowedException();
 }
 
 function handleRead($conn, $table, $primaryKey) {
@@ -67,10 +58,7 @@ function handleRead($conn, $table, $primaryKey) {
         $rows = fetchAllFromStatement($stmt);
 
         if (empty($rows)) {
-            apiResponse(404, [
-                'success' => false,
-                'error' => 'Record not found.'
-            ]);
+            throw new NotFoundException('Record not found.');
         }
 
         apiResponse(200, [
@@ -94,18 +82,11 @@ function handleCreate($conn, $table, $primaryKey, $fields, $required, $data) {
     [$payload, $missing] = extractPayload($fields, $required, $data);
 
     if (!empty($missing)) {
-        apiResponse(400, [
-            'success' => false,
-            'error' => 'Missing required fields.',
-            'missing' => $missing
-        ]);
+        throw new ValidationException('Missing required fields.', ['missing' => $missing]);
     }
 
     if (empty($payload)) {
-        apiResponse(400, [
-            'success' => false,
-            'error' => 'No valid fields provided.'
-        ]);
+        throw new BadRequestException('No valid fields provided.');
     }
 
     $columns = array_keys($payload);
@@ -134,19 +115,13 @@ function handleUpdate($conn, $table, $primaryKey, $fields, $data) {
     }
 
     if ($id === null) {
-        apiResponse(400, [
-            'success' => false,
-            'error' => 'An id is required for update.'
-        ]);
+        throw new BadRequestException('An id is required for update.');
     }
 
     [$payload, ] = extractPayload($fields, [], $data);
 
     if (empty($payload)) {
-        apiResponse(400, [
-            'success' => false,
-            'error' => 'No updatable fields provided.'
-        ]);
+        throw new BadRequestException('No updatable fields provided.');
     }
 
     $setParts = [];
@@ -167,10 +142,7 @@ function handleUpdate($conn, $table, $primaryKey, $fields, $data) {
         $exists = fetchAllFromStatement($existsStmt);
 
         if (empty($exists)) {
-            apiResponse(404, [
-                'success' => false,
-                'error' => 'Record not found.'
-            ]);
+            throw new NotFoundException('Record not found.');
         }
     }
 
@@ -192,20 +164,14 @@ function handleDelete($conn, $table, $primaryKey, $data) {
     }
 
     if ($id === null) {
-        apiResponse(400, [
-            'success' => false,
-            'error' => 'An id is required for delete.'
-        ]);
+        throw new BadRequestException('An id is required for delete.');
     }
 
     $sql = "DELETE FROM {$table} WHERE {$primaryKey} = ?";
     $stmt = executePrepared($conn, $sql, 'i', [$id]);
 
     if ($stmt->affected_rows === 0) {
-        apiResponse(404, [
-            'success' => false,
-            'error' => 'Record not found.'
-        ]);
+        throw new NotFoundException('Record not found.');
     }
 
     apiResponse(200, [
