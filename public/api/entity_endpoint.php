@@ -82,11 +82,16 @@ function handleCreate($conn, $table, $primaryKey, $fields, $required, $data) {
     [$payload, $missing] = extractPayload($fields, $required, $data);
 
     if (!empty($missing)) {
-        throw new ValidationException('Missing required fields.', ['missing' => $missing]);
+        throw new ValidationException(
+            'Missing required fields: ' . implode(', ', $missing) . '.',
+            ['missing' => $missing]
+        );
     }
 
     if (empty($payload)) {
-        throw new BadRequestException('No valid fields provided.');
+        throw new BadRequestException(
+            'No valid fields provided. Allowed fields: ' . implode(', ', $fields) . '.'
+        );
     }
 
     $columns = array_keys($payload);
@@ -115,13 +120,17 @@ function handleUpdate($conn, $table, $primaryKey, $fields, $data) {
     }
 
     if ($id === null) {
-        throw new BadRequestException('An id is required for update.');
+        throw new BadRequestException(
+            "An id is required for update. Provide '{$primaryKey}' in query (?id=) or request body."
+        );
     }
 
     [$payload, ] = extractPayload($fields, [], $data);
 
     if (empty($payload)) {
-        throw new BadRequestException('No updatable fields provided.');
+        throw new BadRequestException(
+            'No updatable fields provided. Allowed fields: ' . implode(', ', $fields) . '.'
+        );
     }
 
     $setParts = [];
@@ -164,7 +173,9 @@ function handleDelete($conn, $table, $primaryKey, $data) {
     }
 
     if ($id === null) {
-        throw new BadRequestException('An id is required for delete.');
+        throw new BadRequestException(
+            "An id is required for delete. Provide '{$primaryKey}' in query (?id=) or request body."
+        );
     }
 
     $sql = "DELETE FROM {$table} WHERE {$primaryKey} = ?";
