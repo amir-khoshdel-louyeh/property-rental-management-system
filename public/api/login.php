@@ -13,7 +13,18 @@ $password = $data['password'] ?? '';
 $deviceName = trim($data['device_name'] ?? 'mobile-app');
 
 if ($username === '' || $password === '') {
-    throw new BadRequestException('Username and password are required.');
+    $missingFields = [];
+    if ($username === '') {
+        $missingFields[] = 'username';
+    }
+    if ($password === '') {
+        $missingFields[] = 'password';
+    }
+
+    throw new ValidationException(
+        'Missing required fields: ' . implode(', ', $missingFields) . '.',
+        ['missing' => $missingFields]
+    );
 }
 
 $userService = new User($conn);
