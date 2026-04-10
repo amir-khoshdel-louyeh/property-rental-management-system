@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/Exceptions.php';
+
 class AppErrorHandler {
     private static $initialized = false;
     private static $context = 'web';
@@ -78,10 +80,34 @@ class AppErrorHandler {
     public static function handleException($exception) {
         self::logThrowable($exception, 'Unhandled exception');
 
-        self::respond(500, [
+        // Determine status code
+        $statusCode = 500;
+        $publicMessage = 'An unexpected error occurred. Please try again later.';
+        $extra = [];
+        
+        // Handle custom exceptions
+        if (method_exists($exception, 'getStatusCode')) {
+            $statusCode = $exception->getStatusCode();
+        }
+        
+        if (method_exists($exception, 'getUserMessage')) {
+            $publicMessage = $exception->getUserMessage();
+        } elseif ($exception instanceof AppException) {
+            $publicMessage = $exception->getMessage();
+        }
+        
+        // Add validation errors if applicable
+        if (method_exists($exception, 'getErrors')) {
+            $errors = $exception->getErrors();
+            if (!empty($errors)) {
+                $extra['errors'] = $errors;
+            }
+        }
+
+        self::respond($statusCode, array_merge([
             'success' => false,
-            'message' => 'An unexpected error occurred. Please try again later.'
-        ]);
+            'message' => $publicMessage
+        ], $extra));
     }
 
     public static function handleShutdown() {
