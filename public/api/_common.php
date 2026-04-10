@@ -34,10 +34,7 @@ function apiJsonBody() {
 
     $decoded = json_decode($raw, true);
     if (json_last_error() !== JSON_ERROR_NONE || !is_array($decoded)) {
-        apiResponse(400, [
-            'success' => false,
-            'error' => 'Invalid JSON body.'
-        ]);
+        throw new BadRequestException('Invalid JSON body.');
     }
 
     return $decoded;
@@ -64,10 +61,7 @@ function apiQueryId() {
 
     $id = $_GET['id'];
     if (!is_numeric($id)) {
-        apiResponse(400, [
-            'success' => false,
-            'error' => 'Invalid id parameter.'
-        ]);
+        throw new BadRequestException('Invalid id parameter.');
     }
 
     return intval($id);
@@ -80,21 +74,29 @@ function isSafeIdentifier($identifier) {
 function executePrepared($conn, $sql, $types = '', $params = []) {
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
-        apiResponse(500, [
-            'success' => false,
-            'error' => 'Query prepare failed: ' . $conn->error
+        AppErrorHandler::logError('Query prepare failed', [
+            'sql' => $sql,
+            'error' => $conn->error
         ]);
+        throw new DatabaseException('Query prepare failed: ' . $conn->error);
     }
 
     if ($types !== '' && !empty($params)) {
-        $stmt->bind_param($types, ...$params);
+        if (!$stmt->bind_param($types, ...$params)) {
+            AppErrorHandler::logError('Parameter binding failed', [
+                'types' => $types,
+                'error' => $stmt->error
+            ]);
+            throw new DatabaseException('Parameter binding failed: ' . $stmt->error);
+        }
     }
 
     if (!$stmt->execute()) {
-        apiResponse(500, [
-            'success' => false,
-            'error' => 'Query execute failed: ' . $stmt->error
+        AppErrorHandler::logError('Query execute failed', [
+            'sql' => $sql,
+            'error' => $stmt->error
         ]);
+        throw new DatabaseException('Query execute failed: ' . $stmt->error);
     }
 
     return $stmt;
