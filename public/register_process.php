@@ -55,7 +55,23 @@ if (!in_array($role, $valid_roles)) {
 
 // Validate input
 if (empty($username) || empty($email) || empty($password) || empty($confirm_password)) {
-    respondValidationErrors('Please fill in all fields', 'register.php');
+    $missingFields = [];
+    if (empty($username)) {
+        $missingFields[] = 'username';
+    }
+    if (empty($email)) {
+        $missingFields[] = 'email';
+    }
+    if (empty($password)) {
+        $missingFields[] = 'password';
+    }
+    if (empty($confirm_password)) {
+        $missingFields[] = 'confirm_password';
+    }
+
+    respondValidationErrors('Missing required fields: ' . implode(', ', $missingFields) . '.', 'register.php', [
+        'missing' => $missingFields
+    ]);
 }
 
 // Validate username
