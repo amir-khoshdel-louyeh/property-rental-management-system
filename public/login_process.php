@@ -45,7 +45,17 @@ $password = $requestData['password'] ?? '';
 
 // Validate input
 if (empty($username) || empty($password)) {
-    respondValidationErrors('Please fill in all fields', 'login.php');
+    $missingFields = [];
+    if (empty($username)) {
+        $missingFields[] = 'username';
+    }
+    if (empty($password)) {
+        $missingFields[] = 'password';
+    }
+
+    respondValidationErrors('Missing required fields: ' . implode(', ', $missingFields) . '.', 'login.php', [
+        'missing' => $missingFields
+    ]);
 }
 
 // Check rate limiting
