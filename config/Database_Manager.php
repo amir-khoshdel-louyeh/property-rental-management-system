@@ -18,13 +18,22 @@ AppErrorHandler::init(AppErrorHandler::detectContext());
                             $db_name) ;
     
     if (!$conn) {
-        throw new Exception("Connection failed: " . mysqli_connect_error());
+        throw new DatabaseException("Connection failed: " . mysqli_connect_error());
     }
+    }
+    catch(DatabaseException $e)
+    {
+        AppErrorHandler::logError("Database connection failed", [
+            'error' => $e->getMessage()
+        ]);
+        throw $e;
     }
     catch(Exception $e)
     {
-        $error_log[] = "Database Error: " . $e->getMessage();
-        AppErrorHandler::fail(500, "Database connection failed. Please contact support.", $e);
+        AppErrorHandler::logError("Database connection error", [
+            'error' => $e->getMessage()
+        ]);
+        throw new DatabaseException("Database connection failed: " . $e->getMessage(), 0, $e);
     }
     if($conn)
     {
@@ -37,38 +46,40 @@ AppErrorHandler::init(AppErrorHandler::detectContext());
      * @param string $sql SQL query with placeholders (?)
      * @param string $types Parameter types (e.g., "sss" for 3 strings)
      * @param array $params Array of parameter values
-     * @return array Result array with success status and statement
+     * @return mysqli_stmt The executed statement
+     * @throws DatabaseException If prepare or execute fails
      */
     function executeQuery($connection, $sql, $types = "", $params = []) {
-        try {
-            $stmt = $connection->prepare($sql);
-            
-            if (!$stmt) {
-                throw new Exception("Prepare failed: " . $connection->error);
-            }
-            
-            // Bind parameters if provided
-            if (!empty($params) && !empty($types)) {
-                $stmt->bind_param($types, ...$params);
-            }
-            
-            if (!$stmt->execute()) {
-                throw new Exception("Execute failed: " . $stmt->error);
-            }
-            
-            return [
-                'success' => true,
-                'stmt' => $stmt,
-                'error' => null
-            ];
-        } catch (Exception $e) {
-            error_log("Query Error: " . $e->getMessage());
-            return [
-                'success' => false,
-                'stmt' => null,
-                'error' => $e->getMessage()
-            ];
+        $stmt = $connection->prepare($sql);
+        
+        if (!$stmt) {
+            AppErrorHandler::logError("Query prepare failed", [
+                'sql' => $sql,
+                'error' => $connection->error
+            ]);
+            throw new DatabaseException("Query prepare failed: " . $connection->error);
         }
+        
+        // Bind parameters if provided
+        if (!empty($params) && !empty($types)) {
+            if (!$stmt->bind_param($types, ...$params)) {
+                AppErrorHandler::logError("Parameter binding failed", [
+                    'types' => $types,
+                    'error' => $stmt->error
+                ]);
+                throw new DatabaseException("Parameter binding failed: " . $stmt->error);
+            }
+        }
+        
+        if (!$stmt->execute()) {
+            AppErrorHandler::logError("Query execute failed", [
+                'sql' => $sql,
+                'error' => $stmt->error
+            ]);
+            throw new DatabaseException("Query execute failed: " . $stmt->error);
+        }
+        
+        return $stmt;
     }
 
     /**
