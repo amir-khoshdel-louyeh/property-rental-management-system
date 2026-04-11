@@ -85,6 +85,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Get all renters for view tab
 function getRenters($conn) {
-    return fetchAllEntities($conn, 'Renter');
+    $searchOptions = [
+        'q' => $_GET['q'] ?? '',
+        'sort' => $_GET['sort'] ?? 'renter_id',
+        'order' => $_GET['order'] ?? 'ASC',
+        'limit' => $_GET['limit'] ?? 200,
+        'columnFilters' => [
+            'first_name' => $_GET['first_name'] ?? '',
+            'last_name' => $_GET['last_name'] ?? '',
+            'email' => $_GET['email'] ?? ''
+        ]
+    ];
+
+    return fetchEntitiesAdvanced(
+        $conn,
+        'Renter',
+        ['renter_id', 'first_name', 'last_name', 'phone_number', 'email', 'date_of_birth'],
+        $searchOptions
+    );
 }
 ?>
