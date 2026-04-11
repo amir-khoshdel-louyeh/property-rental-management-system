@@ -3,6 +3,7 @@
 require_once __DIR__ . '/ErrorHandler.php';
 
 AppErrorHandler::init(AppErrorHandler::detectContext());
+DebugLogger::init('database');
 
     $db_server = getenv('DB_SERVER') ?: 'localhost';
     $db_user = getenv('DB_USER') ?: 'root';
@@ -20,6 +21,10 @@ AppErrorHandler::init(AppErrorHandler::detectContext());
     if (!$conn) {
         throw new DatabaseException("Connection failed: " . mysqli_connect_error());
     }
+    DebugLogger::info('Database connection established', [
+        'server' => $db_server,
+        'database' => $db_name
+    ]);
     }
     catch(DatabaseException $e)
     {
@@ -50,6 +55,11 @@ AppErrorHandler::init(AppErrorHandler::detectContext());
      * @throws DatabaseException If prepare or execute fails
      */
     function executeQuery($connection, $sql, $types = "", $params = []) {
+        DebugLogger::debug('Preparing database query', [
+            'sql' => $sql,
+            'types' => $types
+        ]);
+
         $stmt = $connection->prepare($sql);
         
         if (!$stmt) {
@@ -78,6 +88,11 @@ AppErrorHandler::init(AppErrorHandler::detectContext());
             ]);
             throw new DatabaseException("Query execute failed: " . $stmt->error);
         }
+
+        DebugLogger::debug('Database query executed', [
+            'sql' => $sql,
+            'affected_rows' => $stmt->affected_rows
+        ]);
         
         return $stmt;
     }
