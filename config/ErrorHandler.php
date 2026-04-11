@@ -203,7 +203,15 @@ class AppErrorHandler {
 
         header('Content-Type: text/html; charset=utf-8');
         $message = isset($payload['message']) ? (string)$payload['message'] : 'Unexpected error.';
-        ErrorPageRenderer::render((int)$statusCode, $message, DebugLogger::getRequestId());
+        $details = [];
+        if (isset($payload['errors'])) {
+            $details['errors'] = $payload['errors'];
+        }
+        if (isset($payload['missing'])) {
+            $details['missing'] = $payload['missing'];
+        }
+
+        ErrorPageRenderer::render((int)$statusCode, $message, DebugLogger::getRequestId(), $details);
         exit;
     }
 
