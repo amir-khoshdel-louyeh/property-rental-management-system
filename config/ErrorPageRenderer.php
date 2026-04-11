@@ -1,7 +1,7 @@
 <?php
 
 class ErrorPageRenderer {
-    public static function render($statusCode, $message, $requestId = '') {
+    public static function render($statusCode, $message, $requestId = '', $details = []) {
         $meta = self::statusMeta($statusCode);
         $safeMessage = htmlspecialchars($message !== '' ? $message : $meta['defaultMessage'], ENT_QUOTES, 'UTF-8');
         $safeTitle = htmlspecialchars($meta['title'], ENT_QUOTES, 'UTF-8');
@@ -23,6 +23,9 @@ class ErrorPageRenderer {
         echo '.body{padding:28px;}';
         echo '.message{font-size:18px;line-height:1.5;margin:0 0 12px;}';
         echo '.hint{font-size:15px;color:#52606d;margin:0 0 20px;}';
+        echo '.details{background:#f8fafc;border:1px solid #d9e2ec;border-radius:10px;padding:12px 14px;margin:16px 0 0;}';
+        echo '.details h2{margin:0 0 8px;font-size:14px;color:#243b53;}';
+        echo '.details ul{margin:0;padding-left:18px;color:#334e68;font-size:14px;line-height:1.5;}';
         echo '.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;}';
         echo '.btn{display:inline-block;text-decoration:none;padding:10px 14px;border-radius:8px;font-weight:600;font-size:14px;}';
         echo '.btn-primary{background:#0052cc;color:#fff;}';
@@ -40,6 +43,7 @@ class ErrorPageRenderer {
         echo '<section class="body">';
         echo '<p class="message">' . $safeMessage . '</p>';
         echo '<p class="hint">' . $safeHint . '</p>';
+        self::renderDetails($details);
         echo '<div class="actions">';
         echo '<a class="btn btn-primary" href="index.php">Go To Home</a>';
         echo '<a class="btn btn-secondary" href="javascript:history.back()">Go Back</a>';
@@ -51,6 +55,41 @@ class ErrorPageRenderer {
         echo '</main>';
         echo '</body>';
         echo '</html>';
+    }
+
+    private static function renderDetails($details) {
+        if (!is_array($details) || empty($details)) {
+            return;
+        }
+
+        $items = [];
+        foreach ($details as $value) {
+            if (is_array($value)) {
+                foreach ($value as $nestedValue) {
+                    if (is_scalar($nestedValue)) {
+                        $items[] = (string)$nestedValue;
+                    }
+                }
+                continue;
+            }
+
+            if (is_scalar($value)) {
+                $items[] = (string)$value;
+            }
+        }
+
+        if (empty($items)) {
+            return;
+        }
+
+        echo '<section class="details" aria-label="Validation details">';
+        echo '<h2>Please review:</h2>';
+        echo '<ul>';
+        foreach ($items as $item) {
+            echo '<li>' . htmlspecialchars($item, ENT_QUOTES, 'UTF-8') . '</li>';
+        }
+        echo '</ul>';
+        echo '</section>';
     }
 
     private static function statusMeta($statusCode) {
