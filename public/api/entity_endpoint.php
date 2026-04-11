@@ -17,6 +17,7 @@ function handleEntityRequest($entityKey) {
     $primaryKey = $config['primaryKey'];
     $fields = $config['fields'];
     $required = $config['required'];
+    $searchable = $config['searchable'] ?? array_merge([$primaryKey], $fields);
 
     if (!isSafeIdentifier($table) || !isSafeIdentifier($primaryKey)) {
         throw new ConfigurationException('Unsafe entity configuration: ' . $entityKey);
@@ -25,7 +26,7 @@ function handleEntityRequest($entityKey) {
     $method = apiMethod();
 
     if ($method === 'GET') {
-        handleRead($conn, $table, $primaryKey);
+        handleRead($conn, $table, $primaryKey, $searchable);
     }
 
     if ($method === 'POST') {
@@ -49,7 +50,7 @@ function handleEntityRequest($entityKey) {
     throw new MethodNotAllowedException();
 }
 
-function handleRead($conn, $table, $primaryKey) {
+function handleRead($conn, $table, $primaryKey, $searchableFields) {
     $id = apiQueryId();
 
     if ($id !== null) {
@@ -67,8 +68,28 @@ function handleRead($conn, $table, $primaryKey) {
         ]);
     }
 
+    $safeSearchableFields = [];
+    foreach ($searchableFields as $field) {
+        if (isSafeIdentifier($field)) {
+            $safeSearchableFields[] = $field;
+        }
+    }
+
+    if (empty($safeSearchableFields)) {
+        $safeSearchableFields = [$primaryKey];
+    }
+
+    [$whereParts, $types, $params] = buildSearchWhereClause($safeSearchableFields);
+    [$sortField, $sortOrder] = buildSortClause($primaryKey, $safeSearchableFields);
+    [$limit, $offset] = buildPagination();
+
     $sql = "SELECT * FROM {$table}";
-    $stmt = executePrepared($conn, $sql);
+    if (!empty($whereParts)) {
+        $sql .= ' WHERE ' . implode(' AND ', $whereParts);
+    }
+    $sql .= " ORDER BY {$sortField} {$sortOrder} LIMIT {$limit} OFFSET {$offset}";
+
+    $stmt = executePrepared($conn, $sql, $types, $params);
     $rows = fetchAllFromStatement($stmt);
 
     apiResponse(200, [
@@ -76,6 +97,124 @@ function handleRead($conn, $table, $primaryKey) {
         'count' => count($rows),
         'data' => $rows
     ]);
+}
+
+function buildSearchWhereClause($safeSearchableFields) {
+    $whereParts = [];
+    $types = '';
+    $params = [];
+
+    $q = isset($_GET['q']) ? trim((string)$_GET['q']) : '';
+    if ($q !== '') {
+        $searchParts = [];
+        foreach ($safeSearchableFields as $field) {
+            $searchParts[] = "{$field} LIKE ?";
+            $types .= 's';
+            $params[] = '%' . $q . '%';
+        }
+
+        if (!empty($searchParts)) {
+            $whereParts[] = '(' . implode(' OR ', $searchParts) . ')';
+        }
+    }
+
+    foreach ($safeSearchableFields as $field) {
+        $direct = $_GET[$field] ?? null;
+        if ($direct !== null && trim((string)$direct) !== '') {
+            $whereParts[] = "{$field} = ?";
+            $value = normalizeInputValue($direct);
+            $types .= sqlParamType($value);
+            $params[] = $value;
+        }
+
+        $fieldQueryKey = 'field_' . $field;
+        $fieldValue = $_GET[$fieldQueryKey] ?? null;
+        if ($fieldValue !== null && trim((string)$fieldValue) !== '') {
+            $whereParts[] = "{$field} LIKE ?";
+            $types .= 's';
+            $params[] = '%' . trim((string)$fieldValue) . '%';
+        }
+
+        $minQueryKey = 'min_' . $field;
+        $minValue = $_GET[$minQueryKey] ?? null;
+        if ($minValue !== null && trim((string)$minValue) !== '') {
+            $whereParts[] = "{$field} >= ?";
+            $value = normalizeInputValue($minValue);
+            $types .= sqlParamType($value);
+            $params[] = $value;
+        }
+
+        $maxQueryKey = 'max_' . $field;
+        $maxValue = $_GET[$maxQueryKey] ?? null;
+        if ($maxValue !== null && trim((string)$maxValue) !== '') {
+            $whereParts[] = "{$field} <= ?";
+            $value = normalizeInputValue($maxValue);
+            $types .= sqlParamType($value);
+            $params[] = $value;
+        }
+    }
+
+    return [$whereParts, $types, $params];
+}
+
+function buildSortClause($primaryKey, $safeSearchableFields) {
+    $sortField = $primaryKey;
+    if (isset($_GET['sort'])) {
+        $requestedSort = trim((string)$_GET['sort']);
+        if (in_array($requestedSort, $safeSearchableFields, true)) {
+            $sortField = $requestedSort;
+        }
+    }
+
+    $sortOrder = 'ASC';
+    if (isset($_GET['order'])) {
+        $requestedOrder = strtoupper(trim((string)$_GET['order']));
+        if ($requestedOrder === 'DESC') {
+            $sortOrder = 'DESC';
+        }
+    }
+
+    return [$sortField, $sortOrder];
+}
+
+function buildPagination() {
+    $limit = 100;
+    $offset = 0;
+
+    if (isset($_GET['limit']) && is_numeric($_GET['limit'])) {
+        $limit = intval($_GET['limit']);
+    }
+    if ($limit < 1) {
+        $limit = 1;
+    }
+    if ($limit > 500) {
+        $limit = 500;
+    }
+
+    if (isset($_GET['offset']) && is_numeric($_GET['offset'])) {
+        $offset = intval($_GET['offset']);
+    }
+    if ($offset < 0) {
+        $offset = 0;
+    }
+
+    return [$limit, $offset];
+}
+
+function sqlParamType($value) {
+    if (is_int($value)) {
+        return 'i';
+    }
+
+    if (is_float($value)) {
+        return 'd';
+    }
+
+    if (is_string($value) && is_numeric($value)) {
+        return strpos($value, '.') !== false ? 'd' : 'i';
+    }
+
+    return 's';
 }
 
 function handleCreate($conn, $table, $primaryKey, $fields, $required, $data) {
