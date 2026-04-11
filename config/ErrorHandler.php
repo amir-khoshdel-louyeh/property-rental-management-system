@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/Exceptions.php';
 require_once __DIR__ . '/DebugLogger.php';
+require_once __DIR__ . '/ErrorPageRenderer.php';
 
 class AppErrorHandler {
     private static $initialized = false;
@@ -200,8 +201,9 @@ class AppErrorHandler {
             exit;
         }
 
-        header('Content-Type: text/plain; charset=utf-8');
-        echo $payload['message'] ?? 'Unexpected error.';
+        header('Content-Type: text/html; charset=utf-8');
+        $message = isset($payload['message']) ? (string)$payload['message'] : 'Unexpected error.';
+        ErrorPageRenderer::render((int)$statusCode, $message, DebugLogger::getRequestId());
         exit;
     }
 
