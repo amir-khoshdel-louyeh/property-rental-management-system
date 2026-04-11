@@ -91,6 +91,12 @@
             display: flex;
             gap: 1rem;
         }
+        .search-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
         .btn {
             padding: 0.75rem 1.5rem;
             border: none;
@@ -173,6 +179,9 @@
             .form-row {
                 grid-template-columns: 1fr;
             }
+            .search-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -195,6 +204,54 @@
         <div class="form-section">
             <h2>Property Information</h2>
             <p>View all properties in your portfolio:</p>
+
+            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
+                <div class="search-grid">
+                    <div class="form-group">
+                        <label for="q">Global Search</label>
+                        <input type="text" id="q" name="q" value="<?php echo htmlspecialchars($_GET['q'] ?? ''); ?>" placeholder="Address, city, description...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city" value="<?php echo htmlspecialchars($_GET['city'] ?? ''); ?>" placeholder="Filter by city">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="property_type_filter">Property Type</label>
+                        <input type="text" id="property_type_filter" name="property_type" value="<?php echo htmlspecialchars($_GET['property_type'] ?? ''); ?>" placeholder="House, Apartment...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rent_sale_filter">Rent or Sale</label>
+                        <input type="text" id="rent_sale_filter" name="rent_sale" value="<?php echo htmlspecialchars($_GET['rent_sale'] ?? ''); ?>" placeholder="Rent or Sale">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sort">Sort By</label>
+                        <select id="sort" name="sort">
+                            <option value="property_id" <?php echo (($_GET['sort'] ?? '') === 'property_id') ? 'selected' : ''; ?>>Property ID</option>
+                            <option value="city" <?php echo (($_GET['sort'] ?? '') === 'city') ? 'selected' : ''; ?>>City</option>
+                            <option value="property_type" <?php echo (($_GET['sort'] ?? '') === 'property_type') ? 'selected' : ''; ?>>Property Type</option>
+                            <option value="price" <?php echo (($_GET['sort'] ?? '') === 'price') ? 'selected' : ''; ?>>Price</option>
+                            <option value="landlord_id" <?php echo (($_GET['sort'] ?? '') === 'landlord_id') ? 'selected' : ''; ?>>Landlord ID</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="order">Sort Order</label>
+                        <select id="order" name="order">
+                            <option value="ASC" <?php echo (strtoupper($_GET['order'] ?? 'ASC') === 'ASC') ? 'selected' : ''; ?>>Ascending</option>
+                            <option value="DESC" <?php echo (strtoupper($_GET['order'] ?? '') === 'DESC') ? 'selected' : ''; ?>>Descending</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <a href="Property.php" class="btn btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center;">Reset</a>
+                </div>
+            </form>
             
             <?php
                 $result = getProperties($conn);
