@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/Exceptions.php';
+require_once __DIR__ . '/DebugLogger.php';
 
 class AppErrorHandler {
     private static $initialized = false;
@@ -40,6 +41,8 @@ class AppErrorHandler {
             return;
         }
 
+        DebugLogger::init($context ?? self::$context);
+
         set_error_handler([self::class, 'handlePhpError']);
         set_exception_handler([self::class, 'handleException']);
         register_shutdown_function([self::class, 'handleShutdown']);
@@ -49,6 +52,7 @@ class AppErrorHandler {
 
     public static function setContext($context) {
         self::$context = $context;
+        DebugLogger::setContext($context);
     }
 
     public static function fail($statusCode, $publicMessage, $exception = null, $extra = []) {
@@ -140,12 +144,15 @@ class AppErrorHandler {
 
     private static function logThrowable($exception, $prefix = '') {
         $message = ($prefix !== '' ? $prefix . ': ' : '') . $exception->getMessage();
-        self::logMessage($message, [
+        $context = [
             'type' => get_class($exception),
             'file' => $exception->getFile(),
             'line' => $exception->getLine(),
             'trace' => $exception->getTraceAsString()
-        ]);
+        ];
+
+        self::logMessage($message, $context);
+        DebugLogger::error($message, $context);
     }
 
     private static function logMessage($message, $context = []) {
@@ -167,14 +174,17 @@ class AppErrorHandler {
     
     public static function logInfo($message, $context = []) {
         self::logMessage("[INFO] $message", $context);
+        DebugLogger::info($message, $context);
     }
     
     public static function logWarning($message, $context = []) {
         self::logMessage("[WARNING] $message", $context);
+        DebugLogger::warning($message, $context);
     }
     
     public static function logError($message, $context = []) {
         self::logMessage("[ERROR] $message", $context);
+        DebugLogger::error($message, $context);
     }
 
     private static function respond($statusCode, $payload) {
