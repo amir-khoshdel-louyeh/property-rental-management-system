@@ -2,9 +2,17 @@
 
 require_once __DIR__ . '/../../config/Database_Manager.php';
 require_once __DIR__ . '/../../config/ErrorHandler.php';
+require_once __DIR__ . '/../../config/DebugLogger.php';
 
 AppErrorHandler::init('api');
 AppErrorHandler::setContext('api');
+DebugLogger::init('api');
+
+DebugLogger::info('API request started', [
+    'method' => $_SERVER['REQUEST_METHOD'] ?? 'GET',
+    'uri' => $_SERVER['REQUEST_URI'] ?? '',
+    'ip' => $_SERVER['REMOTE_ADDR'] ?? ''
+]);
 
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
@@ -17,6 +25,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'OPTIONS') {
 }
 
 function apiResponse($statusCode, $payload) {
+    DebugLogger::debug('API response sent', [
+        'status' => $statusCode,
+        'success' => $payload['success'] ?? null
+    ]);
+
     http_response_code($statusCode);
     echo json_encode($payload);
     exit;
@@ -72,6 +85,11 @@ function isSafeIdentifier($identifier) {
 }
 
 function executePrepared($conn, $sql, $types = '', $params = []) {
+    DebugLogger::debug('Preparing API SQL statement', [
+        'sql' => $sql,
+        'types' => $types
+    ]);
+
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
         AppErrorHandler::logError('Query prepare failed', [
@@ -98,6 +116,11 @@ function executePrepared($conn, $sql, $types = '', $params = []) {
         ]);
         throw new DatabaseException('Query execute failed: ' . $stmt->error);
     }
+
+    DebugLogger::debug('API SQL statement executed', [
+        'sql' => $sql,
+        'affected_rows' => $stmt->affected_rows
+    ]);
 
     return $stmt;
 }
