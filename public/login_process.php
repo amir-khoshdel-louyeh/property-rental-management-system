@@ -3,6 +3,9 @@ require_once '../config/Database_Manager.php';
 require_once '../config/User.php';
 require_once '../config/session.php';
 require_once '../config/response_helpers.php';
+require_once '../config/DebugLogger.php';
+
+DebugLogger::init('web-auth');
 
 startSession();
 
@@ -43,6 +46,11 @@ $requestData = getRequestData();
 $username = trim($requestData['username'] ?? '');
 $password = $requestData['password'] ?? '';
 
+DebugLogger::info('Login attempt received', [
+    'username' => $username,
+    'has_password' => $password !== ''
+]);
+
 // Validate input
 if (empty($username) || empty($password)) {
     $missingFields = [];
@@ -76,6 +84,11 @@ $user = new User($conn);
 $result = $user->login($username, $password);
 
 if ($result['success']) {
+    DebugLogger::info('Login successful', [
+        'user_id' => $result['user']['user_id'] ?? null,
+        'username' => $result['user']['username'] ?? $username
+    ]);
+
     // Clear login attempts on successful login
     clearLoginAttempts($username);
     
@@ -99,6 +112,11 @@ if ($result['success']) {
 } else {
     // Record failed login attempt
     recordFailedLogin($username);
+
+    DebugLogger::warning('Login failed', [
+        'username' => $username,
+        'reason' => $result['message'] ?? 'Unknown'
+    ]);
     
     respondError($result['message'], 'login.php', 401);
 }

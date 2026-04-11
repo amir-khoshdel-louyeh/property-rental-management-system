@@ -4,6 +4,9 @@ require_once '../config/User.php';
 require_once '../config/session.php';
 require_once '../config/validation_helpers.php';
 require_once '../config/response_helpers.php';
+require_once '../config/DebugLogger.php';
+
+DebugLogger::init('web-auth');
 
 startSession();
 
@@ -46,6 +49,12 @@ $email = trim($requestData['email'] ?? '');
 $password = $requestData['password'] ?? '';
 $confirm_password = $requestData['confirm_password'] ?? '';
 $role = trim($requestData['role'] ?? 'Renter'); // Default to Renter
+
+DebugLogger::info('Registration attempt received', [
+    'username' => $username,
+    'email' => $email,
+    'role' => $role
+]);
 
 // Validate role
 $valid_roles = ['Admin', 'Landlord', 'Renter'];
@@ -106,8 +115,20 @@ $user = new User($conn);
 $result = $user->register($username, $email, $password, $role);
 
 if ($result['success']) {
+    DebugLogger::info('Registration successful', [
+        'username' => $username,
+        'email' => $email,
+        'role' => $role
+    ]);
+
     respondSuccess('Registration successful! Please login.', 'login.php', 201);
 } else {
+    DebugLogger::warning('Registration failed', [
+        'username' => $username,
+        'email' => $email,
+        'reason' => $result['message'] ?? 'Unknown'
+    ]);
+
     respondError($result['message'], 'register.php', 409);
 }
 ?>
