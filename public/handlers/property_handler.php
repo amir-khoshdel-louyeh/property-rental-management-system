@@ -89,6 +89,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Get all properties for view tab
 function getProperties($conn) {
-    return fetchAllEntities($conn, 'Property');
+    $searchOptions = [
+        'q' => $_GET['q'] ?? '',
+        'sort' => $_GET['sort'] ?? 'property_id',
+        'order' => $_GET['order'] ?? 'ASC',
+        'limit' => $_GET['limit'] ?? 200,
+        'columnFilters' => [
+            'city' => $_GET['city'] ?? '',
+            'property_type' => $_GET['property_type'] ?? '',
+            'rent_sale' => $_GET['rent_sale'] ?? ''
+        ]
+    ];
+
+    return fetchEntitiesAdvanced(
+        $conn,
+        'Property',
+        ['property_id', 'property_type', 'addres', 'city', 'area_property', 'bedrooms', 'descriptions', 'rent_sale', 'price', 'landlord_id', 'zip_code'],
+        $searchOptions
+    );
 }
 ?>
