@@ -90,6 +90,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Get all properties for view tab
 function getProperties($conn) {
     $location = trim((string)($_GET['location'] ?? ''));
+    $minPrice = trim((string)($_GET['min_price'] ?? ''));
+    $maxPrice = trim((string)($_GET['max_price'] ?? ''));
+
+    if ($minPrice !== '' && $maxPrice !== '' && is_numeric($minPrice) && is_numeric($maxPrice) && floatval($minPrice) > floatval($maxPrice)) {
+        $temp = $minPrice;
+        $minPrice = $maxPrice;
+        $maxPrice = $temp;
+    }
 
     $searchOptions = [
         'q' => $_GET['q'] ?? '',
@@ -105,8 +113,8 @@ function getProperties($conn) {
         ],
         'rangeFilters' => [
             'price' => [
-                'min' => $_GET['min_price'] ?? '',
-                'max' => $_GET['max_price'] ?? ''
+                'min' => $minPrice,
+                'max' => $maxPrice
             ]
         ]
     ];
