@@ -5,6 +5,7 @@ require_once __DIR__ . '/entity_handler_common.php';
 
 $message = '';
 $message_type = '';
+$renter_pagination = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
@@ -85,11 +86,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Get all renters for view tab
 function getRenters($conn) {
+    global $renter_pagination;
+
     $searchOptions = [
         'q' => $_GET['q'] ?? '',
         'sort' => $_GET['sort'] ?? 'renter_id',
         'order' => $_GET['order'] ?? 'ASC',
-        'limit' => $_GET['limit'] ?? 200,
+        'limit' => $_GET['limit'] ?? 25,
+        'page' => $_GET['page'] ?? 1,
         'columnFilters' => [
             'first_name' => $_GET['first_name'] ?? '',
             'last_name' => $_GET['last_name'] ?? '',
@@ -97,11 +101,24 @@ function getRenters($conn) {
         ]
     ];
 
-    return fetchEntitiesAdvanced(
+    $data = fetchEntitiesAdvancedPaginated(
         $conn,
         'Renter',
         ['renter_id', 'first_name', 'last_name', 'phone_number', 'email', 'date_of_birth'],
         $searchOptions
     );
+
+    if ($data === false) {
+        $renter_pagination = [];
+        return false;
+    }
+
+    $renter_pagination = $data['pagination'];
+    return $data['result'];
+}
+
+function getRenterPagination() {
+    global $renter_pagination;
+    return $renter_pagination;
 }
 ?>
