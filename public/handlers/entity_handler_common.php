@@ -119,6 +119,31 @@ function fetchEntitiesAdvanced($conn, $table, $searchableFields, $options = []) 
         $params[] = '%' . $cleanValue . '%';
     }
 
+    $rangeFilters = is_array($options['rangeFilters'] ?? null) ? $options['rangeFilters'] : [];
+    foreach ($rangeFilters as $field => $range) {
+        if (!in_array($field, $safeFields, true) || !is_array($range)) {
+            continue;
+        }
+
+        if (isset($range['min']) && trim((string)$range['min']) !== '') {
+            $minValue = trim((string)$range['min']);
+            if (is_numeric($minValue)) {
+                $whereParts[] = "{$field} >= ?";
+                $types .= strpos($minValue, '.') !== false ? 'd' : 'i';
+                $params[] = strpos($minValue, '.') !== false ? floatval($minValue) : intval($minValue);
+            }
+        }
+
+        if (isset($range['max']) && trim((string)$range['max']) !== '') {
+            $maxValue = trim((string)$range['max']);
+            if (is_numeric($maxValue)) {
+                $whereParts[] = "{$field} <= ?";
+                $types .= strpos($maxValue, '.') !== false ? 'd' : 'i';
+                $params[] = strpos($maxValue, '.') !== false ? floatval($maxValue) : intval($maxValue);
+            }
+        }
+    }
+
     $sortField = $options['sort'] ?? $safeFields[0];
     if (!in_array($sortField, $safeFields, true)) {
         $sortField = $safeFields[0];
