@@ -5,6 +5,7 @@ require_once __DIR__ . '/entity_handler_common.php';
 
 $message = '';
 $message_type = '';
+$property_pagination = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
@@ -89,6 +90,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Get all properties for view tab
 function getProperties($conn) {
+    global $property_pagination;
+
     $location = trim((string)($_GET['location'] ?? ''));
     $minPrice = trim((string)($_GET['min_price'] ?? ''));
     $maxPrice = trim((string)($_GET['max_price'] ?? ''));
@@ -103,7 +106,8 @@ function getProperties($conn) {
         'q' => $_GET['q'] ?? '',
         'sort' => $_GET['sort'] ?? 'property_id',
         'order' => $_GET['order'] ?? 'ASC',
-        'limit' => $_GET['limit'] ?? 200,
+        'limit' => $_GET['limit'] ?? 25,
+        'page' => $_GET['page'] ?? 1,
         'columnFilters' => [
             'property_type' => $_GET['property_type'] ?? '',
             'addres' => $location,
@@ -119,11 +123,24 @@ function getProperties($conn) {
         ]
     ];
 
-    return fetchEntitiesAdvanced(
+    $data = fetchEntitiesAdvancedPaginated(
         $conn,
         'Property',
         ['property_id', 'property_type', 'addres', 'city', 'area_property', 'bedrooms', 'descriptions', 'rent_sale', 'price', 'landlord_id', 'zip_code'],
         $searchOptions
     );
+
+    if ($data === false) {
+        $property_pagination = [];
+        return false;
+    }
+
+    $property_pagination = $data['pagination'];
+    return $data['result'];
+}
+
+function getPropertyPagination() {
+    global $property_pagination;
+    return $property_pagination;
 }
 ?>
