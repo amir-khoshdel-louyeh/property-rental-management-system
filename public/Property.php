@@ -175,6 +175,41 @@
         .back-link:hover {
             background: #545b62;
         }
+        .pagination-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        .pagination-links {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .pagination-link {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            text-decoration: none;
+            color: #212529;
+            background: #fff;
+        }
+        .pagination-link.active {
+            background: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+        .pagination-link.disabled {
+            pointer-events: none;
+            color: #6c757d;
+            background: #f8f9fa;
+        }
+        .pagination-meta {
+            color: #495057;
+            font-size: 0.95rem;
+        }
         @media (max-width: 768px) {
             .form-row {
                 grid-template-columns: 1fr;
@@ -255,7 +290,19 @@
                             <option value="DESC" <?php echo (strtoupper($_GET['order'] ?? '') === 'DESC') ? 'selected' : ''; ?>>Descending</option>
                         </select>
                     </div>
+
+                    <div class="form-group">
+                        <label for="limit">Rows Per Page</label>
+                        <select id="limit" name="limit">
+                            <option value="10" <?php echo (($_GET['limit'] ?? '25') === '10') ? 'selected' : ''; ?>>10</option>
+                            <option value="25" <?php echo (($_GET['limit'] ?? '25') === '25') ? 'selected' : ''; ?>>25</option>
+                            <option value="50" <?php echo (($_GET['limit'] ?? '') === '50') ? 'selected' : ''; ?>>50</option>
+                            <option value="100" <?php echo (($_GET['limit'] ?? '') === '100') ? 'selected' : ''; ?>>100</option>
+                        </select>
+                    </div>
                 </div>
+
+                <input type="hidden" name="page" value="1">
 
                 <div class="form-buttons">
                     <button type="submit" class="btn btn-primary">Search</button>
@@ -265,6 +312,7 @@
             
             <?php
                 $result = getProperties($conn);
+                $pagination = getPropertyPagination();
 
                 if ($result === FALSE) {
                     echo '<div class="message error">Error querying database: ' . htmlspecialchars($conn->error) . '</div>';
@@ -285,6 +333,35 @@
                         echo "</tr>";
                     }
                     echo "</table>";
+
+                    $currentPage = intval($pagination['page'] ?? 1);
+                    $totalPages = intval($pagination['total_pages'] ?? 1);
+                    $totalRows = intval($pagination['total_rows'] ?? 0);
+
+                    $baseParams = $_GET;
+                    unset($baseParams['page']);
+
+                    $prevClass = $currentPage <= 1 ? 'pagination-link disabled' : 'pagination-link';
+                    $nextClass = $currentPage >= $totalPages ? 'pagination-link disabled' : 'pagination-link';
+                    $prevUrl = htmlspecialchars($_SERVER['PHP_SELF'] . '?' . http_build_query(array_merge($baseParams, ['page' => max(1, $currentPage - 1)])));
+                    $nextUrl = htmlspecialchars($_SERVER['PHP_SELF'] . '?' . http_build_query(array_merge($baseParams, ['page' => min($totalPages, $currentPage + 1)])));
+
+                    echo '<div class="pagination-bar">';
+                    echo '<div class="pagination-meta">Total: ' . $totalRows . ' records | Page ' . $currentPage . ' of ' . $totalPages . '</div>';
+                    echo '<div class="pagination-links">';
+                    echo '<a class="' . $prevClass . '" href="' . $prevUrl . '">Prev</a>';
+
+                    for ($i = 1; $i <= $totalPages; $i++) {
+                        if ($i === 1 || $i === $totalPages || abs($i - $currentPage) <= 1) {
+                            $pageClass = $i === $currentPage ? 'pagination-link active' : 'pagination-link';
+                            $pageUrl = htmlspecialchars($_SERVER['PHP_SELF'] . '?' . http_build_query(array_merge($baseParams, ['page' => $i])));
+                            echo '<a class="' . $pageClass . '" href="' . $pageUrl . '">' . $i . '</a>';
+                        }
+                    }
+
+                    echo '<a class="' . $nextClass . '" href="' . $nextUrl . '">Next</a>';
+                    echo '</div>';
+                    echo '</div>';
                 } else {
                     echo '<div class="no-data">No properties found in the system</div>';
                 }
