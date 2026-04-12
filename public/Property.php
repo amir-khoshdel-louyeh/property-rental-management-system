@@ -213,8 +213,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="city">City</label>
-                        <input type="text" id="city" name="city" value="<?php echo htmlspecialchars($_GET['city'] ?? ''); ?>" placeholder="Filter by city">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location" value="<?php echo htmlspecialchars($_GET['location'] ?? ''); ?>" placeholder="City, address, or zip code">
                     </div>
 
                     <div class="form-group">
@@ -225,6 +225,16 @@
                     <div class="form-group">
                         <label for="rent_sale_filter">Rent or Sale</label>
                         <input type="text" id="rent_sale_filter" name="rent_sale" value="<?php echo htmlspecialchars($_GET['rent_sale'] ?? ''); ?>" placeholder="Rent or Sale">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="min_price">Min Price</label>
+                        <input type="number" id="min_price" name="min_price" min="0" step="0.01" value="<?php echo htmlspecialchars($_GET['min_price'] ?? ''); ?>" placeholder="0.00">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="max_price">Max Price</label>
+                        <input type="number" id="max_price" name="max_price" min="0" step="0.01" value="<?php echo htmlspecialchars($_GET['max_price'] ?? ''); ?>" placeholder="Any">
                     </div>
 
                     <div class="form-group">
