@@ -89,15 +89,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Get all properties for view tab
 function getProperties($conn) {
+    $location = trim((string)($_GET['location'] ?? ''));
+
     $searchOptions = [
         'q' => $_GET['q'] ?? '',
         'sort' => $_GET['sort'] ?? 'property_id',
         'order' => $_GET['order'] ?? 'ASC',
         'limit' => $_GET['limit'] ?? 200,
         'columnFilters' => [
-            'city' => $_GET['city'] ?? '',
             'property_type' => $_GET['property_type'] ?? '',
+            'addres' => $location,
+            'city' => $location,
+            'zip_code' => $location,
             'rent_sale' => $_GET['rent_sale'] ?? ''
+        ],
+        'rangeFilters' => [
+            'price' => [
+                'min' => $_GET['min_price'] ?? '',
+                'max' => $_GET['max_price'] ?? ''
+            ]
         ]
     ];
 
