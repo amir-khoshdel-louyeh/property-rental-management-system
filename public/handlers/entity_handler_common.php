@@ -73,6 +73,15 @@ function fetchAllEntities($conn, $table) {
 }
 
 function fetchEntitiesAdvanced($conn, $table, $searchableFields, $options = []) {
+    $pagedData = fetchEntitiesAdvancedPaginated($conn, $table, $searchableFields, $options);
+    if ($pagedData === false) {
+        return false;
+    }
+
+    return $pagedData['result'];
+}
+
+function fetchEntitiesAdvancedPaginated($conn, $table, $searchableFields, $options = []) {
     if (!isSafeSqlIdentifier($table)) {
         return false;
     }
@@ -154,7 +163,7 @@ function fetchEntitiesAdvanced($conn, $table, $searchableFields, $options = []) 
         $order = 'ASC';
     }
 
-    $limit = isset($options['limit']) && is_numeric($options['limit']) ? intval($options['limit']) : 200;
+    $limit = isset($options['limit']) && is_numeric($options['limit']) ? intval($options['limit']) : 25;
     if ($limit < 1) {
         $limit = 1;
     }
@@ -162,11 +171,43 @@ function fetchEntitiesAdvanced($conn, $table, $searchableFields, $options = []) 
         $limit = 500;
     }
 
-    $sql = "SELECT * FROM {$table}";
-    if (!empty($whereParts)) {
-        $sql .= ' WHERE ' . implode(' AND ', $whereParts);
+    $page = isset($options['page']) && is_numeric($options['page']) ? intval($options['page']) : 1;
+    if ($page < 1) {
+        $page = 1;
     }
-    $sql .= " ORDER BY {$sortField} {$order} LIMIT {$limit}";
+
+    $offset = ($page - 1) * $limit;
+
+    $baseSql = "FROM {$table}";
+    if (!empty($whereParts)) {
+        $baseSql .= ' WHERE ' . implode(' AND ', $whereParts);
+    }
+
+    $countSql = "SELECT COUNT(*) AS total {$baseSql}";
+    $countStmt = $conn->prepare($countSql);
+    if (!$countStmt) {
+        return false;
+    }
+
+    if (!empty($params)) {
+        $countStmt->bind_param($types, ...$params);
+    }
+
+    if (!$countStmt->execute()) {
+        return false;
+    }
+
+    $countResult = $countStmt->get_result();
+    $countRow = $countResult ? $countResult->fetch_assoc() : null;
+    $totalRows = intval($countRow['total'] ?? 0);
+    $totalPages = $totalRows > 0 ? intval(ceil($totalRows / $limit)) : 1;
+
+    if ($page > $totalPages) {
+        $page = $totalPages;
+        $offset = ($page - 1) * $limit;
+    }
+
+    $sql = "SELECT * {$baseSql} ORDER BY {$sortField} {$order} LIMIT {$limit} OFFSET {$offset}";
 
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
@@ -181,7 +222,17 @@ function fetchEntitiesAdvanced($conn, $table, $searchableFields, $options = []) 
         return false;
     }
 
-    return $stmt->get_result();
+    return [
+        'result' => $stmt->get_result(),
+        'pagination' => [
+            'page' => $page,
+            'limit' => $limit,
+            'total_rows' => $totalRows,
+            'total_pages' => $totalPages,
+            'has_prev' => $page > 1,
+            'has_next' => $page < $totalPages
+        ]
+    ];
 }
 
 function isSafeSqlIdentifier($identifier) {
