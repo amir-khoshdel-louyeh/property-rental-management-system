@@ -82,6 +82,12 @@
             display: flex;
             gap: 1rem;
         }
+        .search-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
         .btn {
             padding: 0.75rem 1.5rem;
             border: none;
@@ -159,6 +165,11 @@
         .back-link:hover {
             background: #545b62;
         }
+        @media (max-width: 768px) {
+            .search-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -180,6 +191,54 @@
         <div class="form-section">
             <h2>Renter Information</h2>
             <p>View all registered renters in the system:</p>
+
+            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
+                <div class="search-grid">
+                    <div class="form-group">
+                        <label for="q">Global Search</label>
+                        <input type="text" id="q" name="q" value="<?php echo htmlspecialchars($_GET['q'] ?? ''); ?>" placeholder="Name, phone, email...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="first_name_filter">First Name</label>
+                        <input type="text" id="first_name_filter" name="first_name" value="<?php echo htmlspecialchars($_GET['first_name'] ?? ''); ?>" placeholder="Filter first name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="last_name_filter">Last Name</label>
+                        <input type="text" id="last_name_filter" name="last_name" value="<?php echo htmlspecialchars($_GET['last_name'] ?? ''); ?>" placeholder="Filter last name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email_filter">Email</label>
+                        <input type="text" id="email_filter" name="email" value="<?php echo htmlspecialchars($_GET['email'] ?? ''); ?>" placeholder="Filter email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sort">Sort By</label>
+                        <select id="sort" name="sort">
+                            <option value="renter_id" <?php echo (($_GET['sort'] ?? '') === 'renter_id') ? 'selected' : ''; ?>>Renter ID</option>
+                            <option value="first_name" <?php echo (($_GET['sort'] ?? '') === 'first_name') ? 'selected' : ''; ?>>First Name</option>
+                            <option value="last_name" <?php echo (($_GET['sort'] ?? '') === 'last_name') ? 'selected' : ''; ?>>Last Name</option>
+                            <option value="email" <?php echo (($_GET['sort'] ?? '') === 'email') ? 'selected' : ''; ?>>Email</option>
+                            <option value="date_of_birth" <?php echo (($_GET['sort'] ?? '') === 'date_of_birth') ? 'selected' : ''; ?>>Date of Birth</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="order">Sort Order</label>
+                        <select id="order" name="order">
+                            <option value="ASC" <?php echo (strtoupper($_GET['order'] ?? 'ASC') === 'ASC') ? 'selected' : ''; ?>>Ascending</option>
+                            <option value="DESC" <?php echo (strtoupper($_GET['order'] ?? '') === 'DESC') ? 'selected' : ''; ?>>Descending</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <a href="Renter.php" class="btn btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center;">Reset</a>
+                </div>
+            </form>
             
             <?php
                 $result = getRenters($conn);
