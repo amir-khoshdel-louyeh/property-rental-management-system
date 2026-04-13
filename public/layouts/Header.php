@@ -33,6 +33,9 @@ startSession();
     <a href="Mapp_Inspection.php">Inspection</a>
     <span style="margin: 0 15px;"> </span>
 
+    <a href="export.php">Export</a>
+    <span style="margin: 0 15px;"> </span>
+
     <?php if (isLoggedIn()): ?>
         <a href="profile.php">Profile</a>
         <span style="margin: 0 15px;"> </span>
