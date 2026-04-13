@@ -39,6 +39,9 @@ startSession();
     <a href="reports.php">Reports</a>
     <span style="margin: 0 15px;"> </span>
 
+    <a href="lease_template.php">Lease Template</a>
+    <span style="margin: 0 15px;"> </span>
+
     <?php if (isLoggedIn()): ?>
         <a href="profile.php">Profile</a>
         <span style="margin: 0 15px;"> </span>
