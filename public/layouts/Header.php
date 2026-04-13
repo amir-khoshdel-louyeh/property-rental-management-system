@@ -36,6 +36,9 @@ startSession();
     <a href="export.php">Export</a>
     <span style="margin: 0 15px;"> </span>
 
+    <a href="reports.php">Reports</a>
+    <span style="margin: 0 15px;"> </span>
+
     <?php if (isLoggedIn()): ?>
         <a href="profile.php">Profile</a>
         <span style="margin: 0 15px;"> </span>
