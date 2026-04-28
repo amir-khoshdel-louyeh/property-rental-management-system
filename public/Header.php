@@ -34,6 +34,10 @@ startSession();
     <span style="margin: 0 15px;"> </span>
 
     <?php if (isLoggedIn()): ?>
+        <?php if (isAdmin()): ?>
+            <a href="admin_dashboard.php">Admin Dashboard</a>
+            <span style="margin: 0 15px;"> </span>
+        <?php endif; ?>
         <a href="profile.php">Profile</a>
         <span style="margin: 0 15px;"> </span>
         <span style="color: #4CAF50;">Welcome, <?php echo htmlspecialchars(getCurrentUsername()); ?>!</span>
