@@ -56,10 +56,10 @@ DebugLogger::info('Registration attempt received', [
     'role' => $role
 ]);
 
-// Validate role
-$valid_roles = ['Admin', 'Landlord', 'Renter'];
+// Validate role - public signups may only create Landlord or Renter accounts
+$valid_roles = ['Landlord', 'Renter'];
 if (!in_array($role, $valid_roles)) {
-    $role = 'Renter'; // Default to Renter if invalid role provided
+    $role = 'Renter'; // Default to Renter if invalid or unauthorized role provided
 }
 
 // Validate input
