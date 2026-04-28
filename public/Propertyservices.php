@@ -4,16 +4,9 @@
     include("handlers/propertyservices_handler.php");
     include("layouts/Header.php");
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Property Services Management</title>
-    <?php include("layouts/CommonHeadLinks.php"); ?>
-    <style>
-        .tabs-container {
+$pageTitle = 'Property Services Management';
+$pageStyles = <<<'CSS'
+.tabs-container {
             display: flex;
             border-bottom: 2px solid #dee2e6;
             margin-bottom: 2rem;
@@ -165,12 +158,10 @@
                 grid-template-columns: 1fr;
             }
         }
-    </style>
-</head>
-<body>
-
-<main class="container">
-    <section class="page-header">
+CSS;
+ob_start();
+?>
+<section class="page-header">
         <h1>Property Services Management</h1>
         <p class="subtitle">Link and manage services for properties</p>
     </section>
@@ -280,27 +271,6 @@
     </section>
 
     <a href="index.php" class="back-link">← Back to Home</a>
-</main>
-
-<script>
-function openTab(evt, tabName) {
-    // Hide all tab contents
-    const tabs = document.querySelectorAll('.tab-content');
-    tabs.forEach(tab => tab.classList.remove('active'));
-    
-    // Remove active class from all buttons
-    const buttons = document.querySelectorAll('.tab-button');
-    buttons.forEach(button => button.classList.remove('active'));
-    
-    // Show the selected tab and mark button as active
-    document.getElementById(tabName).classList.add('active');
-    evt.currentTarget.classList.add('active');
-}
-</script>
-
-</body>
 <?php
-    include("layouts/Footer.html");
-    mysqli_close($conn);
-?>
-</html>
+$pageContent = ob_get_clean();
+include __DIR__ . "/layouts/PageLayout.php";

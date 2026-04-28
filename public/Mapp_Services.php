@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Services</title>
-<?php include("layouts/CommonHeadLinks.php"); ?>
-</head>
-<body>
-<?php
-    include("layouts/Header.php");
+
+$pageTitle = 'Services';
+ob_start();
 ?>
-<main class="container">
-    <section class="page-header">
+<section class="page-header">
         <h1>Services Management</h1>
         <p class="subtitle">Manage property-related services and utilities</p>
     </section>
@@ -50,9 +41,7 @@
 
     <section class="navigation">
         <a href="index.php" class="btn btn-secondary">← Back to Home</a>
-    </section></main>
-</body>
+    </section>
 <?php
-    include("layouts/Footer.html");
-?>
-</html>
+$pageContent = ob_get_clean();
+include __DIR__ . "/layouts/PageLayout.php";
