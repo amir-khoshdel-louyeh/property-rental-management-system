@@ -53,7 +53,6 @@
                         <option value="">Select your account type</option>
                         <option value="Landlord">Landlord - Manage properties</option>
                         <option value="Renter" selected>Renter - Find properties to rent</option>
-                        <option value="Admin">Admin - System administrator</option>
                     </select>
                 </div>
                 
