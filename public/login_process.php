@@ -105,7 +105,7 @@ if ($result['success']) {
 
     respondSuccess(
         'Welcome back, ' . $result['user']['username'],
-        'index.php',
+        $result['user']['role'] === 'Admin' ? 'admin_dashboard.php' : 'index.php',
         200,
         ['user' => $result['user']]
     );
