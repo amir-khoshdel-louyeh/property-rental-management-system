@@ -131,9 +131,15 @@
 </head>
 <body>
 <?php
-    include("layouts/Header.php");
     require_once '../config/session.php';
     require_once '../config/RoleConstants.php';
+
+    if (isLoggedIn() && isAdmin()) {
+        header('Location: admin_dashboard.php');
+        exit();
+    }
+
+    include("layouts/Header.php");
 ?>
 <main class="container">
     <section class="page-header">
