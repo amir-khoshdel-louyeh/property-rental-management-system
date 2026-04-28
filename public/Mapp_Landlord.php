@@ -1,4 +1,5 @@
-
+<?php
+require_once '../config/guards/landlord_guard.php';
 $pageTitle = 'Landlord';
 ob_start();
 ?>

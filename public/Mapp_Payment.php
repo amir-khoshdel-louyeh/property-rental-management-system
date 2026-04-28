@@ -1,4 +1,5 @@
-
+<?php
+require_once '../config/guards/landlord_guard.php';
 $pageTitle = 'Payment';
 ob_start();
 ?>

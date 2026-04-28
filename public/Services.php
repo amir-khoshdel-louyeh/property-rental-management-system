@@ -2,7 +2,7 @@
     include("config/Database_Manager.php");
     include("config/Validation.php");
     include("handlers/services_handler.php");
-    include("layouts/Header.php");
+    require_once '../config/guards/landlord_guard.php';
 ?>
 $pageTitle = 'Services Management';
 $pageStyles = <<<'CSS'

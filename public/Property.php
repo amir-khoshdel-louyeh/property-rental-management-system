@@ -2,7 +2,7 @@
     include("config/Database_Manager.php");
     include("config/Validation.php");
     include("handlers/property_handler.php");
-    include("layouts/Header.php");
+    require_once '../config/guards/landlord_guard.php';
 ?>
 $pageTitle = 'Property Management';
 $pageStyles = <<<'CSS'
